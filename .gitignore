@@ -1,0 +1,6 @@
+app/config/local.php
+app/vendor/stripe-php-19.3.0/.gitignore
+app/vendor/stripe-php-19.3.0/CHANGELOG.md
+app/vendor/stripe-php-19.3.0/CONTRIBUTING.md
+app/vendor/stripe-php-19.3.0/README.md
+app/vendor/stripe-php-19.3.0/composer.json

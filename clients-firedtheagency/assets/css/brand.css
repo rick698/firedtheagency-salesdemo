@@ -1,0 +1,8 @@
+:root {
+    --brand-accent: #facc15;
+}
+
+.brand-mark {
+    background: #facc15;
+    color: #111827;
+}
