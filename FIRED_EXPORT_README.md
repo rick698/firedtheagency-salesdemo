@@ -1,16 +1,17 @@
 # Fired The Agency Setup Export
 
-Upload the contents of this zip to the root of `firedtheagency.com`.
+Upload the contents of this repository to the FTP `clients` directory for
+`firedtheagency.com`.
 
-The setup flow runs from:
+The client portal runs from:
 
-`https://firedtheagency.com/setup.php`
+`https://clients.firedtheagency.com/`
 
-Tracking parameters are preserved in generated URLs when using `setup.php`.
+Tracking parameters are preserved in generated URLs.
 
 Example:
 
-`https://firedtheagency.com/setup.php?tracking=google-ad-1&thank_you=google`
+`https://clients.firedtheagency.com/?tracking=google-ad-1&thank_you=google`
 
 Supported persistent parameters include `tracking`, `source`, `campaign`, `ref`, `thank_you`, `thankyou`, `utm_*`, `gclid`, `fbclid`, and `msclkid`.
 
