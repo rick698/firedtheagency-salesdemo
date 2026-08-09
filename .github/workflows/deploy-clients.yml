@@ -9,19 +9,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      FTP_SERVER_VALUE: ${{ secrets.FTP_SERVER || vars.FTP_SERVER }}
+      FTP_USERNAME_VALUE: ${{ secrets.FTP_USERNAME || vars.FTP_USERNAME }}
+      FTP_CLIENTS_DIR_VALUE: ${{ secrets.FTP_CLIENTS_DIR || vars.FTP_CLIENTS_DIR }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check FTP settings
+        run: |
+          test -n "$FTP_SERVER_VALUE" || { echo "Missing FTP_SERVER repository secret or variable"; exit 1; }
+          test -n "$FTP_USERNAME_VALUE" || { echo "Missing FTP_USERNAME repository secret or variable"; exit 1; }
+          test -n "${{ secrets.FTP_PASSWORD }}" || { echo "Missing FTP_PASSWORD repository secret"; exit 1; }
+          test -n "$FTP_CLIENTS_DIR_VALUE" || { echo "Missing FTP_CLIENTS_DIR repository secret or variable"; exit 1; }
+
       - name: Deploy to firedtheagency.com/clients
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ env.FTP_SERVER_VALUE }}
+          username: ${{ env.FTP_USERNAME_VALUE }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          server-dir: ${{ secrets.FTP_CLIENTS_DIR }}
+          server-dir: ${{ env.FTP_CLIENTS_DIR_VALUE }}
           exclude: |
             **/.git*
             **/.git*/**
