@@ -24,7 +24,10 @@ function brand_url(array $brand, ?string $page = null): string
         || $host === 'localhost'
         || $host === 'smallbusinessdigitalservices.com.au'
         || $host === 'www.smallbusinessdigitalservices.com.au'
-        || $entryPath === '/setup.php'
+        || $host === 'firedtheagency.com'
+        || $host === 'www.firedtheagency.com'
+        || str_ends_with($entryPath, '/setup.php')
+        || str_starts_with($entryPath, '/demo/')
         || str_starts_with($host, '127.0.0.1:')
         || str_starts_with($host, 'localhost:')
     ) {
@@ -47,8 +50,8 @@ function app_entry_path(): string
 {
     $scriptName = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
 
-    if (str_ends_with($scriptName, '/setup.php')) {
-        return '/setup.php';
+    if (str_ends_with($scriptName, '/setup.php') || str_ends_with($scriptName, '/index.php')) {
+        return $scriptName;
     }
 
     return '/index.php';
