@@ -43,6 +43,7 @@ jobs:
             firedtheagency-setup-export.zip
             *.md
             app/config/local.php
+            **/app/config/local.php
             app/vendor/stripe-php-19.3.0/README.md
             app/vendor/stripe-php-19.3.0/CHANGELOG.md
             app/vendor/stripe-php-19.3.0/CONTRIBUTING.md
