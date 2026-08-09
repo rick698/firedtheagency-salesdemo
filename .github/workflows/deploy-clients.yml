@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: env
     env:
       FTP_SERVER_VALUE: ${{ secrets.FTP_SERVER || vars.FTP_SERVER }}
       FTP_USERNAME_VALUE: ${{ secrets.FTP_USERNAME || vars.FTP_USERNAME }}
