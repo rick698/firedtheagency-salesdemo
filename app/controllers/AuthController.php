@@ -134,7 +134,7 @@ function start_demo_dashboard(array $brand): void
     $brandId = (int) $brand['id'];
     $connection = db();
     $sessionId = session_id() ?: bin2hex(random_bytes(8));
-    $demoEmail = 'demo+' . preg_replace('/[^a-zA-Z0-9]/', '', $sessionId) . '@smallbusinessdigitalservices.com.au';
+    $demoEmail = 'demo+' . preg_replace('/[^a-zA-Z0-9]/', '', $sessionId) . '@firedtheagency.com';
     $demoName = 'Demo Visitor';
     $businessName = 'Your Business';
     $passwordHash = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
@@ -149,7 +149,8 @@ function start_demo_dashboard(array $brand): void
     if ($existingUser) {
         login_user($existingUser);
         $_SESSION['demo_preview'] = true;
-        redirect(brand_url($brand, 'dashboard'));
+        unset($_SESSION['draft_campaign_id']);
+        redirect(brand_url($brand, 'create-project') . '&new=1');
     }
 
     $connection->begin_transaction();
@@ -180,7 +181,7 @@ function start_demo_dashboard(array $brand): void
         ]);
         $_SESSION['demo_preview'] = true;
 
-        redirect(brand_url($brand, 'dashboard'));
+        redirect(brand_url($brand, 'create-project') . '&new=1');
     } catch (mysqli_sql_exception $exception) {
         $connection->rollback();
         throw $exception;

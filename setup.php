@@ -5,8 +5,12 @@ declare(strict_types=1);
 require_once __DIR__ . '/app/core/bootstrap.php';
 
 $brand = current_brand($brands, 'firedtheagency');
-$page = $_GET['page'] ?? 'register';
+$page = $_GET['page'] ?? 'login';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+if (isset($_GET['start']) && $method === 'GET') {
+    start_demo_dashboard($brand);
+}
 
 if ($page === 'subscribe' && $method === 'POST') {
     start_subscription($brand);
@@ -73,5 +77,5 @@ match ($page) {
     'invoices' => show_invoices($brand),
     'TAC' => show_terms($brand),
     'thank-you' => show_thank_you($brand),
-    default => show_register($brand),
+    default => show_login($brand),
 };
