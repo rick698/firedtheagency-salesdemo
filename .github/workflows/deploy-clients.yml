@@ -1,4 +1,4 @@
-name: Deploy demo
+name: Deploy clients portal
 
 on:
   push:
@@ -14,14 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy to firedtheagency.com/demo
+      - name: Deploy to firedtheagency.com/clients
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          server-dir: ${{ secrets.FTP_DEMO_DIR }}
+          server-dir: ${{ secrets.FTP_CLIENTS_DIR }}
           exclude: |
             **/.git*
             **/.git*/**
