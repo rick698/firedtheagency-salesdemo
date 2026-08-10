@@ -738,8 +738,14 @@ a {
 
 .setup-preview {
     display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
     gap: 22px;
     margin-bottom: 28px;
+}
+
+.setup-preview-heading {
+    grid-column: 1 / -1;
 }
 
 .setup-preview-heading h2 {
@@ -754,6 +760,7 @@ a {
 }
 
 .google-demo {
+    min-width: 0;
     overflow: hidden;
     border: 1px solid #dbe3ea;
     border-radius: 8px;
@@ -922,6 +929,7 @@ a {
 }
 
 .preview-map-wrap {
+    min-width: 0;
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--border-color);
@@ -965,7 +973,7 @@ a {
     background: #ffffff;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    color: var(--brand-text);
+    color: #111827;
     padding: 30px;
 }
 
@@ -976,13 +984,13 @@ a {
 }
 
 .pricing-heading h2 {
-    color: var(--brand-text);
+    color: #111827;
     font-size: clamp(2rem, 5vw, 3rem);
     margin: 0 0 10px;
 }
 
 .pricing-heading p {
-    color: var(--brand-muted);
+    color: #111827;
     line-height: 1.6;
     margin: 0;
 }
@@ -1043,7 +1051,7 @@ a {
 }
 
 .plan-price {
-    color: var(--brand-text);
+    color: #111827;
     font-family: 'Oswald', Arial, sans-serif;
     font-size: 3.5rem;
     font-weight: 800;
@@ -1058,13 +1066,13 @@ a {
 }
 
 .plan-subtitle {
-    color: var(--brand-muted);
+    color: #111827;
     font-size: 0.9rem;
     margin: 0 0 22px;
 }
 
 .pricing-card ul {
-    color: var(--brand-text);
+    color: #111827;
     list-style: none;
     margin: 0 0 22px;
     padding: 0;
@@ -1149,7 +1157,7 @@ a {
     gap: 10px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    color: var(--brand-text);
+    color: #111827;
     font-size: 0.88rem;
     line-height: 1.35;
     padding: 10px;
@@ -1465,6 +1473,14 @@ a {
     .budget-layout,
     .pricing-grid {
         grid-template-columns: 1fr;
+    }
+
+    .setup-preview {
+        grid-template-columns: 1fr;
+    }
+
+    .setup-preview-heading {
+        grid-column: auto;
     }
 
     .radius-controls {

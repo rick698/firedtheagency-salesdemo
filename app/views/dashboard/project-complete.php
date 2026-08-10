@@ -109,7 +109,7 @@ ob_start();
 
     <section class="pricing-section">
         <div class="pricing-heading">
-            <h2>Your Smart Ad Campaign Package</h2>
+            <h2>Start attracting visitors to your site now!</h2>
             <?php if ($paymentCancelled): ?>
                 <div class="payment-cancelled-bar">
                     <strong>The payment was cancelled. Try again with a different payment method and we didn't start yet.</strong>
@@ -138,8 +138,8 @@ ob_start();
             <article class="pricing-card standard-card">
                 <span class="popular-badge blue">Most Popular</span>
                 <span class="plan-label blue-text">Smart Choice</span>
-                <div class="plan-price">$79</div>
-                <p class="plan-subtitle">AUD per month + 15% of ad spend, plus GST</p>
+                <div class="plan-price">$67</div>
+                <p class="plan-subtitle">AUD per month + 10% of ad spend, plus GST</p>
                 <ul>
                     <li><i class="fas fa-check"></i> Automated ad setup</li>
                     <li><i class="fas fa-check"></i> Live results dashboard</li>
@@ -150,7 +150,7 @@ ob_start();
                     <input type="hidden" name="plan" value="standard">
                     <label class="terms-check">
                         <input type="checkbox" name="accept_terms" value="1">
-                        <span>By starting you agree with the <a href="/TAC" target="_blank">terms and conditions</a>.</span>
+                        <span>By starting you agree with the <a href="https://www.firedtheagency.com/TAC" target="_blank">terms and conditions</a>.</span>
                     </label>
                     <div class="terms-warning"><span>&uarr;</span> You have to agree with the terms and conditions before you can proceed.</div>
                     <button type="submit" class="pricing-button blue">Get started</button>
@@ -161,9 +161,10 @@ ob_start();
                 <span class="popular-badge yellow">Premium Solution</span>
                 <span class="plan-label yellow-text">The Pro System</span>
                 <div class="plan-price">$139</div>
-                <p class="plan-subtitle">AUD per month + 15% of ad spend, plus GST</p>
+                <p class="plan-subtitle">AUD per month + 10% of ad spend, plus GST</p>
                 <ul>
                     <li><i class="fas fa-check"></i> Everything in Standard</li>
+                    <li><i class="fas fa-check"></i> CRM, automated, lead followup</li>
                     <li><i class="fas fa-bolt"></i> Priority optimisation review</li>
                     <li><i class="fas fa-forward"></i> Fast-track onboarding</li>
                     <li><i class="fas fa-file-alt"></i> Setup fee reduced from $197 to $97 one off, plus GST</li>
@@ -172,7 +173,7 @@ ob_start();
                     <input type="hidden" name="plan" value="pro">
                     <label class="terms-check">
                         <input type="checkbox" name="accept_terms" value="1">
-                        <span>By starting you agree with the <a href="/TAC" target="_blank">terms and conditions</a>.</span>
+                        <span>By starting you agree with the <a href="https://www.firedtheagency.com/TAC" target="_blank">terms and conditions</a>.</span>
                     </label>
                     <div class="terms-warning"><span>&uarr;</span> You have to agree with the terms and conditions before you can proceed.</div>
                     <button type="submit" class="pricing-button yellow">Get started</button>

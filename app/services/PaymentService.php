@@ -43,7 +43,7 @@ function create_stripe_checkout_session(array $brand, array $user, array $busine
     require_once $stripeInit;
     \Stripe\Stripe::setApiKey($secretKey);
 
-    $managementFeeBaseCents = $plan === 'pro' ? 13900 : 7900;
+    $managementFeeBaseCents = $plan === 'pro' ? 13900 : 6700;
     $setupFeeBaseCents = 9700;
     $managementFeeCents = amount_with_gst_cents($managementFeeBaseCents);
     $setupFeeCents = amount_with_gst_cents($setupFeeBaseCents);

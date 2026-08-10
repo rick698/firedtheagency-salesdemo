@@ -294,7 +294,7 @@ function start_stripe_checkout(array $brand): void
 
     $subscriptionStatus = 'checkout_started';
     $planName = $plan === 'pro' ? 'Premium Solution' : 'Smart Choice';
-    $amountCents = $plan === 'pro' ? 13900 : 7900;
+    $amountCents = $plan === 'pro' ? 13900 : 6700;
     $currency = 'aud';
 
     $stmt = $connection->prepare(
