@@ -17,6 +17,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="/shared/assets/css/dashboard.css">
-    <link rel="stylesheet" href="<?= e($brand['public_path']) ?>/assets/css/brand.css">
+    <link rel="stylesheet" href="/shared/assets/css/dashboard.css?v=<?= e((string) filemtime(APP_ROOT . '/shared/assets/css/dashboard.css')) ?>">
+    <link rel="stylesheet" href="<?= e($brand['public_path']) ?>/assets/css/brand.css?v=<?= e((string) filemtime(APP_ROOT . $brand['public_path'] . '/assets/css/brand.css')) ?>">
 </head>

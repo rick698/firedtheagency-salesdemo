@@ -379,12 +379,20 @@ a {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: #ffffff;
+    color: #111827;
     padding: 18px;
 }
 
 .radius-controls label {
-    color: var(--brand-text);
+    color: #111827;
     font-weight: 800;
+}
+
+.radius-controls span,
+.radius-controls p,
+.manual-city label,
+.toggle-row {
+    color: #111827;
 }
 
 .radius-controls input[type="range"] {
@@ -602,10 +610,15 @@ a {
     padding: 12px;
 }
 
+.project-wizard input,
+.project-wizard textarea {
+    color: #111827;
+}
+
 .form-grid input::placeholder,
 .form-grid textarea::placeholder,
 .city-search-row input::placeholder {
-    color: #64748b;
+    color: #334155;
     opacity: 1;
 }
 

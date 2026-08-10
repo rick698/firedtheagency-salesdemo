@@ -4,6 +4,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/shared/assets/js/dashboard.js"></script>
+    <script src="/shared/assets/js/dashboard.js?v=<?= e((string) filemtime(APP_ROOT . '/shared/assets/js/dashboard.js')) ?>"></script>
 </body>
 </html>
