@@ -2,6 +2,17 @@
 $budget = isset($campaign['budget_cents']) && $campaign['budget_cents'] !== null ? (int) round(((int) $campaign['budget_cents']) / 100) : 400;
 $checkoutError = $_SESSION['checkout_error'] ?? '';
 $paymentCancelled = ($_GET['checkout'] ?? '') === 'cancelled' || ($_GET['checkout_error'] ?? '') === 'terms';
+$target = $campaign['target_audience_data'] ?? [];
+$keywords = array_values(array_filter($keywords ?? []));
+$service = trim((string) ($target['service_short'] ?? 'service'));
+$city = trim((string) ($target['service_area'] ?? 'your area'));
+$lat = (float) ($target['target_lat'] ?? -31.9523);
+$lng = (float) ($target['target_lng'] ?? 115.8613);
+$radiusKm = max(1, min(17, (int) ($target['target_radius_km'] ?? 17)));
+$websiteHost = parse_url((string) ($business['website'] ?? ''), PHP_URL_HOST) ?: (string) ($business['website'] ?? 'yourwebsite.com.au');
+$websiteHost = preg_replace('#^www\.#i', '', trim($websiteHost)) ?: 'yourwebsite.com.au';
+$adHeadline = ucwords(trim(($service !== '' ? $service : 'Service') . ($city !== '' && $city !== 'your area' ? ' in ' . preg_replace('/,.*/', '', $city) : '')));
+$adDescription = 'Find help from ' . ($business['business_name'] ?? 'your business') . '. Enquire online and get a setup built around your services.';
 unset($_SESSION['checkout_error']);
 ob_start();
 ?>
@@ -39,8 +50,61 @@ ob_start();
 <main class="main-content">
     <section class="final-hero">
         <span class="final-kicker"><i class="fas fa-circle-check"></i> Project saved</span>
-        <h1>We will advertise on your services for <?= e($business['business_name']) ?>.</h1>
+        <h1>That's it! View your setup.</h1>
         <p>We will start with an ad budget of <strong>$<?= e(number_format($budget)) ?> AUD</strong>, plus GST.</p>
+    </section>
+
+    <section
+        class="setup-preview"
+        data-keywords='<?= e(json_encode($keywords, JSON_HEX_APOS | JSON_HEX_QUOT)) ?>'
+        data-lat="<?= e((string) $lat) ?>"
+        data-lng="<?= e((string) $lng) ?>"
+        data-radius="<?= e((string) $radiusKm) ?>"
+    >
+        <div class="setup-preview-heading">
+            <h2>Your ad could be visible to many people searching</h2>
+            <p>This is a demo ad, live versions will be reviewed both by us and yourself before it goes live.</p>
+        </div>
+
+        <div class="google-demo">
+            <div class="google-top">
+                <div class="google-logo">Google</div>
+                <div class="google-search-shell">
+                    <span class="google-keyword"><?= e($keywords[0] ?? ($service . ' ' . $city)) ?></span>
+                    <i class="fas fa-magnifying-glass"></i>
+                </div>
+            </div>
+            <div class="google-tabs">
+                <span class="active">All</span>
+                <span>Maps</span>
+                <span>Images</span>
+                <span>Videos</span>
+                <span>News</span>
+            </div>
+            <div class="organic-blur"></div>
+            <article class="demo-ad-card">
+                <div class="demo-ad-business">
+                    <span>Ad</span>
+                    <div>
+                        <strong><?= e($business['business_name'] ?? 'Your Business') ?></strong>
+                        <small><?= e($websiteHost) ?></small>
+                    </div>
+                </div>
+                <div class="sponsored">Sponsored</div>
+                <h3><?= e($adHeadline) ?></h3>
+                <p><?= e($adDescription) ?></p>
+                <div class="demo-ad-actions">
+                    <span>Visit website</span>
+                    <span>Call now</span>
+                    <span>Get quote</span>
+                </div>
+            </article>
+            <div class="organic-blur lower"></div>
+        </div>
+
+        <div class="preview-map-wrap">
+            <div id="previewMap"></div>
+        </div>
     </section>
 
     <section class="pricing-section">

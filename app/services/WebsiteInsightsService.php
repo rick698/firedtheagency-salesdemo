@@ -275,3 +275,104 @@ function handle_website_insights(array $brand): void
     echo json_encode(website_insights_for_domain($domain));
     exit;
 }
+
+function generate_search_keywords(array $campaign, array $business): array
+{
+    $target = $campaign['target_audience_data'] ?? json_decode((string) ($campaign['target_audience'] ?? ''), true) ?: [];
+    $service = trim((string) ($target['service_short'] ?? $campaign['campaign_name'] ?? 'service'));
+    $serviceDescription = trim((string) ($target['service_description'] ?? ''));
+    $city = setup_preview_city($target);
+    $fallback = fallback_search_keywords($service, $serviceDescription, $city);
+    $config = require APP_ROOT . '/app/config/app.php';
+    $apiKey = openai_api_key($config);
+
+    if ($apiKey === '') {
+        return $fallback;
+    }
+
+    $payload = [
+        'model' => $config['ai']['model'] ?? 'gpt-4o-mini',
+        'response_format' => ['type' => 'json_object'],
+        'messages' => [
+            [
+                'role' => 'system',
+                'content' => 'Return only valid JSON with key "keywords" containing exactly 5 Google search keywords. At least 3 must be directly related to the main service and at least 2 must come from the detailed service/menu items. Include the city/service area when natural. Keep each keyword short and search-like.',
+            ],
+            [
+                'role' => 'user',
+                'content' => "Business: " . ($business['business_name'] ?? '') . "\nMain service: {$service}\nService/menu details: {$serviceDescription}\nCity/service area: {$city}",
+            ],
+        ],
+        'temperature' => 0.35,
+    ];
+
+    $ch = curl_init('https://api.openai.com/v1/chat/completions');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $apiKey,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_CONNECTTIMEOUT => 8,
+        CURLOPT_TIMEOUT => 20,
+    ]);
+
+    $body = curl_exec($ch);
+    $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+
+    if (!is_string($body) || $body === '' || $status >= 400) {
+        return $fallback;
+    }
+
+    $decoded = json_decode($body, true);
+    $content = $decoded['choices'][0]['message']['content'] ?? '';
+    $insights = is_string($content) ? json_decode($content, true) : null;
+    $keywords = is_array($insights) && is_array($insights['keywords'] ?? null) ? $insights['keywords'] : [];
+    $keywords = array_values(array_filter(array_map(
+        static fn ($keyword) => sanitize_ai_field($keyword, 70),
+        $keywords
+    )));
+
+    return array_slice(array_values(array_unique(array_merge($keywords, $fallback))), 0, 5);
+}
+
+function setup_preview_city(array $target): string
+{
+    $serviceArea = trim((string) ($target['service_area'] ?? ''));
+
+    if ($serviceArea === '' || str_starts_with($serviceArea, 'Custom Pin:')) {
+        return 'your area';
+    }
+
+    return $serviceArea;
+}
+
+function fallback_search_keywords(string $service, string $serviceDescription, string $city): array
+{
+    $service = trim($service) !== '' ? trim($service) : 'service';
+    $citySuffix = $city !== '' && $city !== 'your area' ? ' ' . $city : '';
+    $detailItems = preg_split('/[\r\n,;]+/', $serviceDescription) ?: [];
+    $detailItems = array_values(array_filter(array_map('trim', $detailItems)));
+    $keywords = [
+        $service . $citySuffix,
+        'best ' . $service . $citySuffix,
+        $service . ' near me',
+    ];
+
+    foreach ($detailItems as $item) {
+        if (count($keywords) >= 5) {
+            break;
+        }
+
+        $keywords[] = $item . $citySuffix;
+    }
+
+    while (count($keywords) < 5) {
+        $keywords[] = $service . ' quote' . $citySuffix;
+    }
+
+    return array_slice(array_values(array_unique($keywords)), 0, 5);
+}

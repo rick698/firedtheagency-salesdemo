@@ -707,7 +707,7 @@ a {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: #ffffff;
-    color: var(--brand-text);
+    color: #111827;
     margin-bottom: 28px;
     padding: 34px;
 }
@@ -725,6 +725,7 @@ a {
 .final-hero h1 {
     max-width: 950px;
     margin: 0 0 12px;
+    color: #111827;
     font-size: clamp(2rem, 5vw, 3.5rem);
     line-height: 1.05;
 }
@@ -733,6 +734,231 @@ a {
     color: var(--brand-muted);
     font-size: 1.2rem;
     margin: 0;
+}
+
+.setup-preview {
+    display: grid;
+    gap: 22px;
+    margin-bottom: 28px;
+}
+
+.setup-preview-heading h2 {
+    color: #ffffff;
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 6px;
+}
+
+.setup-preview-heading p {
+    color: #e5e7eb;
+    margin: 0;
+}
+
+.google-demo {
+    overflow: hidden;
+    border: 1px solid #dbe3ea;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #f8ffff 0%, #ffffff 60%, #fff8e6 100%);
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+}
+
+.google-top {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 24px;
+    align-items: center;
+    padding: 34px 44px 22px;
+}
+
+.google-logo {
+    color: #4285f4;
+    font-family: Arial, sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+
+.google-search-shell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 70px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.18);
+    color: #202124;
+    font-size: clamp(1.2rem, 3vw, 1.7rem);
+    padding: 0 28px 0 34px;
+}
+
+.google-search-shell i {
+    color: #4285f4;
+    font-size: 2rem;
+}
+
+.google-keyword {
+    display: inline-block;
+    transition: transform 0.42s ease, opacity 0.42s ease;
+}
+
+.google-keyword.leaving {
+    opacity: 0;
+    transform: translateY(-120%);
+}
+
+.google-keyword.entering {
+    opacity: 0;
+    transform: translateY(120%);
+}
+
+.google-tabs {
+    display: flex;
+    gap: 30px;
+    border-top: 1px solid #eef2f7;
+    border-bottom: 1px solid #e5e7eb;
+    color: #5f6368;
+    font-size: 1.05rem;
+    padding: 16px 44px 0;
+}
+
+.google-tabs span {
+    padding-bottom: 16px;
+}
+
+.google-tabs .active {
+    border-bottom: 3px solid #1a73e8;
+    color: #1a73e8;
+}
+
+.organic-blur {
+    width: min(76%, 720px);
+    height: 86px;
+    border-radius: 16px;
+    filter: blur(10px);
+    background: linear-gradient(#e5e7eb, #f3f4f6);
+    margin: 36px 44px 20px;
+    opacity: 0.62;
+}
+
+.organic-blur.lower {
+    width: 68%;
+    height: 120px;
+    margin-top: 28px;
+}
+
+.demo-ad-card {
+    border: 2px solid #b7d9d6;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+    color: #3c4043;
+    margin: 0 44px 26px;
+    padding: 26px 28px;
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+}
+
+.demo-ad-business {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    color: #202124;
+}
+
+.demo-ad-business > span {
+    display: inline-grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    border-radius: 50%;
+    background: #087b72;
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.demo-ad-business strong,
+.demo-ad-business small {
+    display: block;
+}
+
+.demo-ad-business small {
+    color: #5f6368;
+    font-size: 1rem;
+}
+
+.sponsored {
+    color: #3c4043;
+    font-weight: 900;
+    margin: 16px 0 8px;
+}
+
+.demo-ad-card h3 {
+    color: #1a0dab;
+    font-family: Arial, sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0 0 14px;
+    text-transform: none;
+}
+
+.demo-ad-card p {
+    color: #3c4043;
+    font-size: 1.25rem;
+    line-height: 1.45;
+    margin: 0 0 24px;
+}
+
+.demo-ad-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.demo-ad-actions span {
+    border: 1px solid #d0e0de;
+    border-radius: 999px;
+    color: #087b72;
+    font-weight: 900;
+    padding: 12px 20px;
+}
+
+.preview-map-wrap {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+#previewMap {
+    height: 875px;
+    width: 100%;
+}
+
+.keyword-map-label {
+    border: 0;
+    background: transparent;
+}
+
+.keyword-map-label span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(8, 123, 114, 0.28);
+    border-radius: 999px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 0.82rem;
+    font-weight: 900;
+    padding: 7px 10px;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+    white-space: nowrap;
+}
+
+.keyword-map-label span::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #facc15;
+    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.28);
 }
 
 .pricing-section {

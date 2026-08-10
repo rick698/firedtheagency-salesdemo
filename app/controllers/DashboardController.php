@@ -227,7 +227,10 @@ function show_project_complete(array $brand): void
         'campaign_name' => 'Google Ads',
         'budget_cents' => 40000,
     ];
+    $campaign['target_audience_data'] = json_decode($campaign['target_audience'] ?? '', true) ?: [];
+    $campaign['goals_data'] = json_decode($campaign['goals'] ?? '', true) ?: [];
     $draftProject = find_draft_project($connection, $businessId);
+    $keywords = generate_search_keywords($campaign, $business);
 
     view('dashboard/project-complete', [
         'brand' => $brand,
@@ -235,6 +238,7 @@ function show_project_complete(array $brand): void
         'user' => $user,
         'business' => $business,
         'campaign' => $campaign,
+        'keywords' => $keywords,
         'draftProject' => $draftProject,
     ]);
 }

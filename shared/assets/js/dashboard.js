@@ -20,6 +20,7 @@ const monthlyImpressions = [
 
 let performanceChart;
 let setupMap;
+let previewMap;
 let currentMarker;
 let currentCircle;
 let currentRadius = 17;
@@ -44,6 +45,10 @@ $(function () {
 
     if ($('.project-wizard').length) {
         initProjectWizard();
+    }
+
+    if ($('.setup-preview').length) {
+        initSetupPreview();
     }
 
     initCheckoutTerms();
@@ -247,6 +252,121 @@ function isDefaultServiceCity(value) {
     const normalized = (value || '').trim().toLowerCase();
 
     return normalized === '' || normalized === 'perth' || normalized === 'perth, wa' || normalized === 'perth, wa 6000';
+}
+
+function initSetupPreview() {
+    const preview = $('.setup-preview');
+    const keywords = parsePreviewKeywords(preview.data('keywords'));
+    const lat = parseFloat(preview.data('lat'));
+    const lng = parseFloat(preview.data('lng'));
+    const radius = parseInt(preview.data('radius'), 10) || 17;
+
+    if (keywords.length) {
+        animateGoogleKeywords(keywords);
+    }
+
+    if (document.getElementById('previewMap') && Number.isFinite(lat) && Number.isFinite(lng)) {
+        initPreviewMap([lat, lng], radius, keywords);
+    }
+}
+
+function parsePreviewKeywords(raw) {
+    if (Array.isArray(raw)) {
+        return raw.filter(Boolean);
+    }
+
+    if (typeof raw === 'string' && raw.trim() !== '') {
+        try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    return [];
+}
+
+function animateGoogleKeywords(keywords) {
+    const keywordEl = $('.google-keyword');
+    let index = 0;
+
+    if (!keywordEl.length || keywords.length < 2) {
+        return;
+    }
+
+    setInterval(function () {
+        keywordEl.addClass('leaving');
+
+        setTimeout(function () {
+            index = (index + 1) % keywords.length;
+            keywordEl.removeClass('leaving').addClass('entering').text(keywords[index]);
+
+            requestAnimationFrame(function () {
+                keywordEl.removeClass('entering');
+            });
+        }, 430);
+    }, 2400);
+}
+
+function initPreviewMap(center, radiusKm, keywords) {
+    if (previewMap) {
+        return;
+    }
+
+    previewMap = L.map('previewMap', {
+        scrollWheelZoom: false
+    }).setView(center, 10);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(previewMap);
+
+    const circle = L.circle(center, {
+        color: '#facc15',
+        fillColor: '#facc15',
+        fillOpacity: 0.12,
+        radius: radiusKm * 1000
+    }).addTo(previewMap);
+
+    keywords.slice(0, 5).forEach(function (keyword, index) {
+        const point = randomPointInRadius(center, radiusKm, index);
+        const icon = L.divIcon({
+            className: 'keyword-map-label',
+            html: '<span>' + escapeHtml(keyword) + '</span>',
+            iconSize: null
+        });
+
+        L.marker(point, { icon }).addTo(previewMap);
+    });
+
+    setTimeout(function () {
+        previewMap.invalidateSize();
+        previewMap.fitBounds(circle.getBounds(), {
+            padding: [90, 90],
+            maxZoom: 11
+        });
+    }, 150);
+}
+
+function randomPointInRadius(center, radiusKm, index) {
+    const angle = ((index * 137.508) % 360) * Math.PI / 180;
+    const distance = radiusKm * (0.22 + (index % 5) * 0.13);
+    const latOffset = (distance / 111) * Math.cos(angle);
+    const lngOffset = (distance / (111 * Math.cos(center[0] * Math.PI / 180))) * Math.sin(angle);
+
+    return [center[0] + latOffset, center[1] + lngOffset];
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 function validateCurrentStep(step) {
