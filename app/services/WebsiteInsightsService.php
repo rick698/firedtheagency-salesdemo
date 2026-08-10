@@ -133,7 +133,7 @@ function html_to_prompt_text(string $html): string
 function extract_website_insights(string $url, string $homepageText): array
 {
     $config = require APP_ROOT . '/app/config/app.php';
-    $apiKey = trim((string) ($config['ai']['openai_api_key'] ?? ''));
+    $apiKey = openai_api_key($config);
 
     if ($apiKey === '') {
         return [
@@ -200,6 +200,23 @@ function extract_website_insights(string $url, string $homepageText): array
         'why_choose' => sanitize_ai_field($insights['why_choose'] ?? '', 800),
         'city' => sanitize_ai_field($insights['city'] ?? '', 120),
     ];
+}
+
+function openai_api_key(array $config): string
+{
+    $aiConfig = $config['ai'] ?? [];
+
+    foreach (['openai_api_key', 'api_key', 'key'] as $keyName) {
+        $value = trim((string) ($aiConfig[$keyName] ?? ''));
+
+        if ($value !== '') {
+            return $value;
+        }
+    }
+
+    $envValue = trim((string) getenv('OPENAI_API_KEY'));
+
+    return $envValue;
 }
 
 function sanitize_ai_field(mixed $value, int $maxLength): string

@@ -82,6 +82,7 @@ ob_start();
                 <label>
                     <span>Business Name</span>
                     <input type="text" name="business_name" value="<?= e($businessName) ?>" placeholder="Your business name" required>
+                    <small class="field-spacer" aria-hidden="true"></small>
                 </label>
                 <label>
                     <span>URL / Domain</span>
