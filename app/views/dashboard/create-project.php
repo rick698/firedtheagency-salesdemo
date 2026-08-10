@@ -3,7 +3,6 @@ $goals = $draftProject['goals_data'] ?? [];
 $targetAudience = $draftProject['target_audience_data'] ?? [];
 $projectName = $draftProject['campaign_name'] ?? 'Google Ads';
 $businessWebsite = $business['website'] ?? '';
-$accountEmail = $business['email'] ?? ($user['email'] ?? '');
 $story = $goals['story'] ?? '';
 $whyChoose = $goals['why_choose'] ?? '';
 $serviceArea = $draftProject['target_location'] ?? ($targetAudience['service_area'] ?? '');
@@ -18,10 +17,6 @@ $targetLng = $targetAudience['target_lng'] ?? '';
 $monthlyBudget = isset($draftProject['budget_cents']) && $draftProject['budget_cents'] !== null ? (int) round(((int) $draftProject['budget_cents']) / 100) : 400;
 $isDemoPreview = !empty($_SESSION['demo_preview']);
 $businessName = $business['business_name'] ?? '';
-
-if ($isDemoPreview && str_starts_with((string) $accountEmail, 'demo+')) {
-    $accountEmail = '';
-}
 
 if ($isDemoPreview && $businessName === 'Your Business') {
     $businessName = '';
@@ -90,11 +85,7 @@ ob_start();
                     <small class="website-insights-status" aria-live="polite"></small>
                 </label>
                 <label class="wide">
-                    <span>Email Address</span>
-                    <input type="email" name="account_email" value="<?= e($accountEmail) ?>" required>
-                </label>
-                <label class="wide">
-                    <span>Your service at the highest level in max 3 words (only 1 service allowed - like lawn care, plumbing, electrician, Concrete polishing)</span>
+                    <span>Your service at the highest level in max 3 words (only 1 service allowed - like lawn care, plumbing, electrician)</span>
                     <input type="text" name="service_short" value="<?= e($serviceShort) ?>" maxlength="80" required>
                 </label>
                 <label class="wide">
@@ -195,22 +186,6 @@ ob_start();
             <button class="primary-button hidden" type="submit" id="wizardSave">Save Project</button>
         </div>
 
-        <?php if ($isDemoPreview): ?>
-            <div class="modal-backdrop password-modal-backdrop" id="passwordModal" aria-hidden="true">
-                <div class="tax-modal">
-                    <h2>Password</h2>
-                    <p>Create a password so you can log in later and get back to your details.</p>
-                    <label>
-                        <span>Password</span>
-                        <input type="password" name="account_password" minlength="8" autocomplete="new-password">
-                    </label>
-                    <div class="wizard-actions">
-                        <button class="secondary-button" type="button" id="passwordCancel">Back</button>
-                        <button class="primary-button" type="button" id="passwordContinue">Save Project</button>
-                    </div>
-                </div>
-            </div>
-        <?php endif; ?>
     </form>
 </main>
 <script>

@@ -85,8 +85,7 @@ function save_project(array $brand): void
     $campaignName = post_value('campaign_name');
     $businessName = post_value('business_name');
     $businessWebsite = post_value('business_website');
-    $accountEmail = post_value('account_email');
-    $accountPassword = post_value('account_password');
+    $accountEmail = project_contact_email($user);
     $story = post_value('story');
     $whyChoose = post_value('why_choose');
     $serviceArea = post_value('service_area');
@@ -111,14 +110,6 @@ function save_project(array $brand): void
 
     if ($businessWebsite === '') {
         $errors[] = 'Business URL or domain is required.';
-    }
-
-    if (!filter_var($accountEmail, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'A valid email address is required.';
-    }
-
-    if (!empty($_SESSION['demo_preview']) && strlen($accountPassword) < 8) {
-        $errors[] = 'Password must be at least 8 characters.';
     }
 
     if ($serviceShort === '' || $serviceDescription === '') {
@@ -164,15 +155,12 @@ function save_project(array $brand): void
         $businessStmt->execute();
 
         if (!empty($_SESSION['demo_preview'])) {
-            $passwordHash = password_hash($accountPassword, PASSWORD_DEFAULT);
-            $userStatus = 'active';
-            $userStmt = $connection->prepare('UPDATE users SET name = ?, email = ?, password_hash = ?, status = ?, updated_at = NOW() WHERE id = ? AND brand_id = ?');
-            $userStmt->bind_param('ssssii', $businessName, $accountEmail, $passwordHash, $userStatus, $userId, $brandId);
+            $userStatus = 'demo';
+            $userStmt = $connection->prepare('UPDATE users SET name = ?, status = ?, updated_at = NOW() WHERE id = ? AND brand_id = ?');
+            $userStmt->bind_param('ssii', $businessName, $userStatus, $userId, $brandId);
             $userStmt->execute();
 
             $_SESSION['user']['name'] = $businessName;
-            $_SESSION['user']['email'] = $accountEmail;
-            unset($_SESSION['demo_preview']);
         }
 
         $campaignId = (int) ($_SESSION['draft_campaign_id'] ?? 0);
@@ -666,7 +654,7 @@ function save_project_step(array $brand): void
     $budgetCents = $budget > 0 ? $budget * 100 : null;
     $businessName = post_value('business_name');
     $businessWebsite = post_value('business_website');
-    $accountEmail = post_value('account_email');
+    $accountEmail = project_contact_email($user);
     $serviceArea = post_value('service_area');
     $targetRadiusKm = (int) post_value('target_radius_km');
 
@@ -681,9 +669,6 @@ function save_project_step(array $brand): void
             $errors[] = 'Business URL or domain is required.';
         }
 
-        if (!filter_var($accountEmail, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'A valid email address is required.';
-        }
     }
 
     if ($errors) {
@@ -835,4 +820,11 @@ function find_draft_project(mysqli $connection, int $businessId): ?array
     $project['goals_data'] = json_decode($project['goals'] ?? '', true) ?: [];
 
     return $project;
+}
+
+function project_contact_email(array $user): string
+{
+    $email = trim((string) ($user['email'] ?? ''));
+
+    return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : 'demo@firedtheagency.com';
 }

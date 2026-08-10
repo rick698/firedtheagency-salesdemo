@@ -115,36 +115,6 @@ function initProjectWizard() {
         }
     });
 
-    $('#wizardSave').on('click', function (event) {
-        const passwordField = $('input[name="account_password"]');
-
-        if (passwordField.length && passwordField.val().length < 8) {
-            event.preventDefault();
-            $('#passwordModal').addClass('active').attr('aria-hidden', 'false');
-            setTimeout(function () {
-                passwordField.trigger('focus');
-            }, 50);
-        }
-    });
-
-    $('#passwordCancel').on('click', function () {
-        $('#passwordModal').removeClass('active').attr('aria-hidden', 'true');
-    });
-
-    $('#passwordContinue').on('click', function () {
-        const passwordField = $('input[name="account_password"]');
-
-        if (passwordField.val().length < 8) {
-            alert('Password must be at least 8 characters.');
-            passwordField.trigger('focus');
-            return;
-        }
-
-        $('#passwordModal').removeClass('active').attr('aria-hidden', 'true');
-        $('#wizardSave').text('Saving...');
-        form.trigger('submit');
-    });
-
     form.on('submit', function () {
         $('#wizardSave').text('Saving...');
     });
