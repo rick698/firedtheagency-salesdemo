@@ -13,6 +13,7 @@ require_once APP_ROOT . '/app/core/db.php';
 require_once APP_ROOT . '/app/core/auth.php';
 require_once APP_ROOT . '/app/services/PaymentService.php';
 require_once APP_ROOT . '/app/services/StripeWebhookService.php';
+require_once APP_ROOT . '/app/services/WebsiteInsightsService.php';
 require_once APP_ROOT . '/app/controllers/SubscribeController.php';
 require_once APP_ROOT . '/app/controllers/AuthController.php';
 require_once APP_ROOT . '/app/controllers/DashboardController.php';

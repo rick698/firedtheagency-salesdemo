@@ -149,7 +149,98 @@ function initProjectWizard() {
         $('#wizardSave').text('Saving...');
     });
 
+    initWebsiteInsights();
     renderStep();
+}
+
+function initWebsiteInsights() {
+    const form = $('.project-wizard');
+    const insightsUrl = form.data('website-insights-url');
+    const domainField = $('input[name="business_website"]');
+    let timer = null;
+    let lastRequestedDomain = '';
+    let activeRequest = null;
+
+    if (!insightsUrl || !domainField.length) {
+        return;
+    }
+
+    function scheduleLookup(delay) {
+        clearTimeout(timer);
+        timer = setTimeout(runLookup, delay);
+    }
+
+    function runLookup() {
+        const domain = (domainField.val() || '').trim();
+        const serviceField = $('input[name="service_short"]');
+        const whyChooseField = $('textarea[name="why_choose"]');
+
+        if (
+            domain.length <= 5
+            || domain === lastRequestedDomain
+            || serviceField.val().trim() !== ''
+            || whyChooseField.val().trim() !== ''
+        ) {
+            return;
+        }
+
+        lastRequestedDomain = domain;
+
+        if (activeRequest && activeRequest.readyState !== 4) {
+            activeRequest.abort();
+        }
+
+        activeRequest = $.ajax({
+            url: insightsUrl,
+            method: 'POST',
+            dataType: 'json',
+            data: { domain }
+        }).done(function (response) {
+            if (!response || !response.ok) {
+                return;
+            }
+
+            applyWebsiteInsights(response);
+        });
+    }
+
+    domainField.on('input', function () {
+        scheduleLookup(900);
+    });
+
+    domainField.on('blur', function () {
+        scheduleLookup(50);
+    });
+}
+
+function applyWebsiteInsights(insights) {
+    const serviceField = $('input[name="service_short"]');
+    const whyChooseField = $('textarea[name="why_choose"]');
+    const currentCity = ($('#manualCity').val() || '').trim();
+    const suggestedCity = (insights.city || '').trim();
+
+    if (serviceField.val().trim() === '' && insights.service) {
+        serviceField.val(insights.service);
+    }
+
+    if (whyChooseField.val().trim() === '' && insights.why_choose) {
+        whyChooseField.val(insights.why_choose);
+    }
+
+    if (suggestedCity !== '' && isDefaultServiceCity(currentCity) && !isDefaultServiceCity(suggestedCity)) {
+        $('#manualCity').val(suggestedCity);
+        $('input[name="service_area"]').val(suggestedCity);
+
+        if (setupMap) {
+            findCity();
+        }
+    }
+}
+
+function isDefaultServiceCity(value) {
+    const normalized = (value || '').trim().toLowerCase();
+
+    return normalized === '' || normalized === 'perth' || normalized === 'perth, wa' || normalized === 'perth, wa 6000';
 }
 
 function validateCurrentStep(step) {

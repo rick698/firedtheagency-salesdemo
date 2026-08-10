@@ -11,6 +11,10 @@ $config = [
         'price_id' => '',
         'currency' => 'aud',
     ],
+    'ai' => [
+        'openai_api_key' => '',
+        'model' => 'gpt-4o-mini',
+    ],
 ];
 
 $localConfigPath = __DIR__ . '/local.php';
@@ -24,6 +28,10 @@ if (is_file($localConfigPath)) {
 
     if (isset($localConfig['stripe']) && is_array($localConfig['stripe'])) {
         $config['stripe'] = array_merge($config['stripe'], $localConfig['stripe']);
+    }
+
+    if (isset($localConfig['ai']) && is_array($localConfig['ai'])) {
+        $config['ai'] = array_merge($config['ai'], $localConfig['ai']);
     }
 }
 

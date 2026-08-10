@@ -36,6 +36,11 @@ if ($page === 'create-project-step' && $method === 'POST') {
     exit;
 }
 
+if ($page === 'website-insights' && $method === 'POST') {
+    handle_website_insights($brand);
+    exit;
+}
+
 if ($page === 'stripe-checkout' && $method === 'POST') {
     start_stripe_checkout($brand);
     exit;

@@ -56,7 +56,7 @@ ob_start();
 </nav>
 
 <main class="main-content">
-    <form class="project-wizard" action="<?= e(brand_url($brand, 'create-project')) ?>" method="post" data-step-save-url="<?= e(brand_url($brand, 'create-project-step')) ?>">
+    <form class="project-wizard" action="<?= e(brand_url($brand, 'create-project')) ?>" method="post" data-step-save-url="<?= e(brand_url($brand, 'create-project-step')) ?>" data-website-insights-url="<?= e(brand_url($brand, 'website-insights')) ?>">
         <?php if (!empty($errors)): ?>
             <div class="alert-box">
                 <?php foreach ($errors as $error): ?>
