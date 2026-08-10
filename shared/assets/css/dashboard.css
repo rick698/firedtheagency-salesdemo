@@ -359,7 +359,7 @@ a {
 }
 
 .radius-note {
-    color: var(--brand-muted);
+    color: #334155;
     font-size: 0.9rem;
     margin: 0 0 8px;
 }
@@ -428,13 +428,13 @@ a {
     width: 100%;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    color: var(--brand-text);
+    color: #111827;
     font: inherit;
     padding: 0 10px;
 }
 
 .radius-help {
-    color: var(--brand-muted);
+    color: #334155;
     font-size: 0.9rem;
     font-style: italic;
     line-height: 1.45;
@@ -597,9 +597,44 @@ a {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: #ffffff;
-    color: var(--brand-text);
+    color: #111827;
     font: inherit;
     padding: 12px;
+}
+
+.form-grid input::placeholder,
+.form-grid textarea::placeholder,
+.city-search-row input::placeholder {
+    color: #64748b;
+    opacity: 1;
+}
+
+.form-grid input:focus,
+.form-grid textarea:focus,
+.city-search-row input:focus {
+    border-color: #475569;
+    color: #111827;
+    outline: 2px solid rgba(250, 204, 21, 0.32);
+    outline-offset: 1px;
+}
+
+.website-insights-status {
+    min-height: 18px;
+    color: #475569;
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.website-insights-status.loading {
+    color: #854d0e;
+}
+
+.website-insights-status.done {
+    color: #166534;
+}
+
+.website-insights-status.error {
+    color: #991b1b;
 }
 
 .form-grid textarea {

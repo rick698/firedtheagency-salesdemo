@@ -174,12 +174,14 @@ function initWebsiteInsights() {
         const domain = (domainField.val() || '').trim();
         const serviceField = $('input[name="service_short"]');
         const whyChooseField = $('textarea[name="why_choose"]');
+        const canFillService = serviceField.val().trim() === '';
+        const canFillWhyChoose = whyChooseField.val().trim() === '';
+        const canFillCity = isDefaultServiceCity($('#manualCity').val());
 
         if (
             domain.length <= 5
             || domain === lastRequestedDomain
-            || serviceField.val().trim() !== ''
-            || whyChooseField.val().trim() !== ''
+            || (!canFillService && !canFillWhyChoose && !canFillCity)
         ) {
             return;
         }
@@ -190,6 +192,8 @@ function initWebsiteInsights() {
             activeRequest.abort();
         }
 
+        setWebsiteInsightsStatus('loading', 'Hold on, fetching data from your website...');
+
         activeRequest = $.ajax({
             url: insightsUrl,
             method: 'POST',
@@ -197,10 +201,14 @@ function initWebsiteInsights() {
             data: { domain }
         }).done(function (response) {
             if (!response || !response.ok) {
+                setWebsiteInsightsStatus('error', response && response.message ? response.message : 'Could not read that website yet.');
                 return;
             }
 
             applyWebsiteInsights(response);
+            setWebsiteInsightsStatus('done', 'Website details added where fields were empty.');
+        }).fail(function () {
+            setWebsiteInsightsStatus('error', 'Could not read that website yet.');
         });
     }
 
@@ -211,6 +219,27 @@ function initWebsiteInsights() {
     domainField.on('blur', function () {
         scheduleLookup(50);
     });
+
+    if (domainField.val().trim().length > 5) {
+        scheduleLookup(700);
+    }
+}
+
+function setWebsiteInsightsStatus(type, message) {
+    const status = $('.website-insights-status');
+
+    if (!status.length) {
+        return;
+    }
+
+    status.removeClass('loading done error');
+
+    if (!message) {
+        status.text('');
+        return;
+    }
+
+    status.addClass(type).text(message);
 }
 
 function applyWebsiteInsights(insights) {

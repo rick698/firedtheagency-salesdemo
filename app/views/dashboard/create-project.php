@@ -17,9 +17,14 @@ $targetLat = $targetAudience['target_lat'] ?? '';
 $targetLng = $targetAudience['target_lng'] ?? '';
 $monthlyBudget = isset($draftProject['budget_cents']) && $draftProject['budget_cents'] !== null ? (int) round(((int) $draftProject['budget_cents']) / 100) : 400;
 $isDemoPreview = !empty($_SESSION['demo_preview']);
+$businessName = $business['business_name'] ?? '';
 
 if ($isDemoPreview && str_starts_with((string) $accountEmail, 'demo+')) {
     $accountEmail = '';
+}
+
+if ($isDemoPreview && $businessName === 'Your Business') {
+    $businessName = '';
 }
 
 ob_start();
@@ -76,11 +81,12 @@ ob_start();
             <div class="form-grid">
                 <label>
                     <span>Business Name</span>
-                    <input type="text" name="business_name" value="<?= e($business['business_name']) ?>" required>
+                    <input type="text" name="business_name" value="<?= e($businessName) ?>" placeholder="Your business name" required>
                 </label>
                 <label>
                     <span>URL / Domain</span>
                     <input type="text" name="business_website" value="<?= e($businessWebsite) ?>" placeholder="example.com.au" required>
+                    <small class="website-insights-status" aria-live="polite"></small>
                 </label>
                 <label class="wide">
                     <span>Email Address</span>
