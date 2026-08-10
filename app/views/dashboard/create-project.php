@@ -87,13 +87,8 @@ ob_start();
                     <input type="email" name="account_email" value="<?= e($accountEmail) ?>" required>
                 </label>
                 <label class="wide">
-                    <span>Your Service in max 5 words (only 1 service allowed - like lawn care, plumbing or electrician)</span>
+                    <span>Your service at the highest level in max 3 words (only 1 service allowed - like lawn care, plumbing, electrician, Concrete polishing)</span>
                     <input type="text" name="service_short" value="<?= e($serviceShort) ?>" maxlength="80" required>
-                </label>
-                <label class="wide">
-                    <span>The Story</span>
-                    <small class="field-help">When did you start? Who do you help? What should customers trust about you?</small>
-                    <textarea name="story" rows="4"><?= e($story) ?></textarea>
                 </label>
                 <label class="wide">
                     <span>Why Choose You?</span>
