@@ -91,7 +91,7 @@ function save_project(array $brand): void
     $serviceArea = post_value('service_area');
     $serviceShort = post_value('service_short');
     $serviceDescription = post_value('service_description');
-    $sweetener = post_value('sweetener');
+    $sweetener = '';
     $exclusions = post_value('exclusions');
     $targetLat = post_value('target_lat');
     $targetLng = post_value('target_lng');
@@ -684,7 +684,7 @@ function save_project_step(array $brand): void
         'service_area' => $serviceArea,
         'service_short' => post_value('service_short'),
         'service_description' => post_value('service_description'),
-        'sweetener' => post_value('sweetener'),
+        'sweetener' => '',
         'exclusions' => post_value('exclusions'),
         'target_lat' => post_value('target_lat'),
         'target_lng' => post_value('target_lng'),

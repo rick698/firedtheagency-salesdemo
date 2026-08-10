@@ -150,7 +150,7 @@ function extract_website_insights(string $url, string $homepageText): array
         'messages' => [
             [
                 'role' => 'system',
-                'content' => 'Extract concise marketing setup data from homepage text. Return only valid JSON with keys: service, why_choose, city. service must be the single highest-level service in max 3 words. why_choose must be a newline-separated bullet list of concrete USPs found or strongly implied. city must be the main service city/suburb and state/country if available, otherwise empty.',
+                'content' => 'Extract concise marketing setup data from homepage text. Return only valid JSON with keys: service, service_description, why_choose, city. service must be the single highest-level service in max 3 words. service_description must describe the primary service in 1-3 useful sentences based on the site. why_choose must be a newline-separated bullet list of concrete USPs found or strongly implied. city must be the main service city/suburb and state/country if available, otherwise empty.',
             ],
             [
                 'role' => 'user',
@@ -199,6 +199,7 @@ function extract_website_insights(string $url, string $homepageText): array
     return [
         'ok' => true,
         'service' => sanitize_ai_field($insights['service'] ?? '', 80),
+        'service_description' => sanitize_ai_field($insights['service_description'] ?? '', 700),
         'why_choose' => sanitize_ai_field($insights['why_choose'] ?? '', 800),
         'city' => sanitize_ai_field($insights['city'] ?? '', 120),
     ];

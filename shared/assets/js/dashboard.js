@@ -143,15 +143,17 @@ function initWebsiteInsights() {
     function runLookup() {
         const domain = (domainField.val() || '').trim();
         const serviceField = $('input[name="service_short"]');
+        const serviceDescriptionField = $('textarea[name="service_description"]');
         const whyChooseField = $('textarea[name="why_choose"]');
         const canFillService = serviceField.val().trim() === '';
+        const canFillServiceDescription = serviceDescriptionField.val().trim() === '';
         const canFillWhyChoose = whyChooseField.val().trim() === '';
         const canFillCity = isDefaultServiceCity($('#manualCity').val());
 
         if (
             domain.length <= 5
             || domain === lastRequestedDomain
-            || (!canFillService && !canFillWhyChoose && !canFillCity)
+            || (!canFillService && !canFillServiceDescription && !canFillWhyChoose && !canFillCity)
         ) {
             return;
         }
@@ -214,12 +216,17 @@ function setWebsiteInsightsStatus(type, message) {
 
 function applyWebsiteInsights(insights) {
     const serviceField = $('input[name="service_short"]');
+    const serviceDescriptionField = $('textarea[name="service_description"]');
     const whyChooseField = $('textarea[name="why_choose"]');
     const currentCity = ($('#manualCity').val() || '').trim();
     const suggestedCity = (insights.city || '').trim();
 
     if (serviceField.val().trim() === '' && insights.service) {
         serviceField.val(insights.service);
+    }
+
+    if (serviceDescriptionField.val().trim() === '' && insights.service_description) {
+        serviceDescriptionField.val(insights.service_description);
     }
 
     if (whyChooseField.val().trim() === '' && insights.why_choose) {

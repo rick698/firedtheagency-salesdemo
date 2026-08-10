@@ -8,7 +8,6 @@ $whyChoose = $goals['why_choose'] ?? '';
 $serviceArea = $draftProject['target_location'] ?? ($targetAudience['service_area'] ?? '');
 $serviceDescription = $targetAudience['service_description'] ?? '';
 $serviceShort = $targetAudience['service_short'] ?? '';
-$sweetener = $targetAudience['sweetener'] ?? '';
 $exclusions = $targetAudience['exclusions'] ?? '';
 $targetRadius = (int) ($targetAudience['target_radius_km'] ?? 17);
 $targetRadius = max(1, min(17, $targetRadius));
@@ -143,12 +142,8 @@ ob_start();
 
             <div class="form-grid single">
                 <label>
-                    <span>Your service in detail:</span>
+                    <span>Your service in more detail:</span>
                     <textarea name="service_description" rows="5" placeholder="Example: Residential cleaning, end-of-lease cleans, lawn mowing, emergency plumbing..." required><?= e($serviceDescription) ?></textarea>
-                </label>
-                <label>
-                    <span>The Sweetener</span>
-                    <textarea name="sweetener" rows="4" placeholder="Example: same-day quotes, weekend appointments, guarantee, free inspection..."><?= e($sweetener) ?></textarea>
                 </label>
                 <label>
                     <span>Exclusions</span>
