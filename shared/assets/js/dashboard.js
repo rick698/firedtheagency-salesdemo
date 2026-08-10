@@ -116,7 +116,7 @@ function initProjectWizard() {
     });
 
     form.on('submit', function () {
-        $('#wizardSave').text('Saving...');
+        $('#wizardSave').text('Loading setup...');
     });
 
     initWebsiteInsights();

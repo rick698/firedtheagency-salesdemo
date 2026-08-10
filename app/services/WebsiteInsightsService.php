@@ -150,7 +150,7 @@ function extract_website_insights(string $url, string $homepageText): array
         'messages' => [
             [
                 'role' => 'system',
-                'content' => 'Extract concise marketing setup data from homepage text. Return only valid JSON with keys: service, service_description, why_choose, city. service must be the single highest-level service in max 3 words. service_description must describe the primary service in 1-3 useful sentences based on the site. why_choose must be a newline-separated bullet list of concrete USPs found or strongly implied. city must be the main service city/suburb and state/country if available, otherwise empty.',
+                'content' => 'Extract concise marketing setup data from homepage text. Return only valid JSON with keys: service, service_description, why_choose, city. service must be the single highest-level service in max 3 words, such as plumbing, lawn care, or concrete polishing. service_description must be a newline-separated list of the main service categories or menu items the business offers, not quality claims or why-us copy. For a plumber, examples are hot water systems, leak detection, general plumbing, emergency plumbing, blocked drains. For concrete polishing, examples are concrete polishing, honed concrete, floor preparation. why_choose must be a separate newline-separated bullet list of concrete USPs, guarantees, proof points, or reasons to choose them. city must be the main service city/suburb and state/country if available, otherwise empty.',
             ],
             [
                 'role' => 'user',

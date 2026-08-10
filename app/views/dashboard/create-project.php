@@ -143,7 +143,8 @@ ob_start();
             <div class="form-grid single">
                 <label>
                     <span>Your service in more detail:</span>
-                    <textarea name="service_description" rows="5" placeholder="Example: Residential cleaning, end-of-lease cleans, lawn mowing, emergency plumbing..." required><?= e($serviceDescription) ?></textarea>
+                    <small class="field-help">List the main service categories or menu items you offer, not why customers should choose you.</small>
+                    <textarea name="service_description" rows="5" placeholder="Example: hot water systems, leak detection, general plumbing, emergency plumbing, blocked drains..." required><?= e($serviceDescription) ?></textarea>
                 </label>
                 <label>
                     <span>Exclusions</span>
@@ -178,7 +179,7 @@ ob_start();
         <div class="wizard-actions">
             <button class="secondary-button" type="button" id="wizardBack">Back</button>
             <button class="primary-button" type="button" id="wizardNext">Next</button>
-            <button class="primary-button hidden" type="submit" id="wizardSave">Save Project</button>
+            <button class="primary-button hidden" type="submit" id="wizardSave">See your setup!</button>
         </div>
 
     </form>
