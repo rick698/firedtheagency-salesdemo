@@ -136,9 +136,11 @@ function extract_website_insights(string $url, string $homepageText): array
     $apiKey = openai_api_key($config);
 
     if ($apiKey === '') {
+        $diagnostics = openai_config_diagnostics($config);
+
         return [
             'ok' => false,
-            'message' => 'OpenAI is not configured.',
+            'message' => 'OpenAI is not configured. ' . $diagnostics,
         ];
     }
 
@@ -217,6 +219,27 @@ function openai_api_key(array $config): string
     $envValue = trim((string) getenv('OPENAI_API_KEY'));
 
     return $envValue;
+}
+
+function openai_config_diagnostics(array $config): string
+{
+    $localConfigPath = APP_ROOT . '/app/config/local.php';
+    $aiConfig = $config['ai'] ?? [];
+    $presentKeys = [];
+
+    if (is_array($aiConfig)) {
+        foreach (['openai_api_key', 'api_key', 'key'] as $keyName) {
+            if (array_key_exists($keyName, $aiConfig)) {
+                $presentKeys[] = $keyName . '=' . (trim((string) $aiConfig[$keyName]) !== '' ? 'set' : 'empty');
+            }
+        }
+    }
+
+    $envStatus = getenv('OPENAI_API_KEY') ? 'set' : 'empty';
+    $localStatus = is_file($localConfigPath) ? 'found' : 'missing';
+    $keyStatus = $presentKeys ? implode(', ', $presentKeys) : 'none';
+
+    return 'Config check: local.php ' . $localStatus . '; ai keys ' . $keyStatus . '; OPENAI_API_KEY ' . $envStatus . '.';
 }
 
 function sanitize_ai_field(mixed $value, int $maxLength): string
