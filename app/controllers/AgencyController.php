@@ -6,10 +6,40 @@ const AGENCY_EMAIL = 'rick@theexperience.net.au';
 const AGENCY_NAME = 'Rick';
 const AGENCY_PASSWORD_HASH = '$2y$12$h9HzxIoLKXehQSxoiK60iuwV6eC6FLWnhau95pSWXUDTs0ZR7oKn2';
 const AGENCY_WEBHOOK_URL = 'https://hook.us1.make.com/kh7h7r1ol6kf99vq2r78etv4d1tynggh';
+const AGENCY_BRAND_ID = 2;
+const AGENCY_BASE_URL = 'https://clients.firedtheagency.com';
+
+function agency_config(): array
+{
+    $localConfigPath = APP_ROOT . '/app/config/local.php';
+
+    if (!is_file($localConfigPath)) {
+        return [];
+    }
+
+    $localConfig = require $localConfigPath;
+
+    return isset($localConfig['backend']) && is_array($localConfig['backend']) ? $localConfig['backend'] : [];
+}
+
+function agency_login_email(): string
+{
+    $config = agency_config();
+    $email = trim((string) ($config['emaillogin'] ?? ''));
+
+    return $email !== '' ? $email : AGENCY_EMAIL;
+}
+
+function agency_login_name(): string
+{
+    $email = agency_login_email();
+
+    return trim(strstr($email, '@', true) ?: AGENCY_NAME) ?: AGENCY_NAME;
+}
 
 function agency_is_logged_in(): bool
 {
-    return !empty($_SESSION['agency_user']) && ($_SESSION['agency_user']['email'] ?? '') === AGENCY_EMAIL;
+    return !empty($_SESSION['agency_user']) && ($_SESSION['agency_user']['email'] ?? '') === agency_login_email();
 }
 
 function require_agency_login(): void
@@ -27,9 +57,13 @@ function handle_agency_login(): void
 {
     $login = strtolower(trim((string) ($_POST['login'] ?? '')));
     $password = (string) ($_POST['password'] ?? '');
-    $isValidLogin = in_array($login, [strtolower(AGENCY_NAME), AGENCY_EMAIL], true);
+    $email = agency_login_email();
+    $name = agency_login_name();
+    $plainPassword = (string) (agency_config()['passwordlogin'] ?? '');
+    $isValidLogin = in_array($login, [strtolower($name), strtolower($email)], true);
+    $isValidPassword = $plainPassword !== '' ? hash_equals($plainPassword, $password) : password_verify($password, AGENCY_PASSWORD_HASH);
 
-    if (!$isValidLogin || !password_verify($password, AGENCY_PASSWORD_HASH)) {
+    if (!$isValidLogin || !$isValidPassword) {
         view('agency/login', [
             'title' => 'Agency Login',
             'error' => 'Invalid agency login.',
@@ -38,8 +72,8 @@ function handle_agency_login(): void
     }
 
     $_SESSION['agency_user'] = [
-        'name' => AGENCY_NAME,
-        'email' => AGENCY_EMAIL,
+        'name' => $name,
+        'email' => $email,
     ];
 
     redirect('/agency');
@@ -78,9 +112,11 @@ function show_agency_leads(): void
         LEFT JOIN subscriptions s ON s.id = (
             SELECT s2.id FROM subscriptions s2 WHERE s2.business_id = b.id ORDER BY s2.updated_at DESC, s2.created_at DESC, s2.id DESC LIMIT 1
         )
-        WHERE b.brand_id = 1
+        WHERE b.brand_id = ?
         ORDER BY COALESCE(c.updated_at, b.updated_at, b.created_at) DESC, b.id DESC'
     );
+    $brandId = AGENCY_BRAND_ID;
+    $stmt->bind_param('i', $brandId);
     $stmt->execute();
     $leads = [];
 
@@ -98,8 +134,9 @@ function show_agency_leads(): void
 function show_agency_lead(int $leadId): void
 {
     $connection = db();
-    $businessStmt = $connection->prepare('SELECT * FROM businesses WHERE id = ? AND brand_id = 1 LIMIT 1');
-    $businessStmt->bind_param('i', $leadId);
+    $businessStmt = $connection->prepare('SELECT * FROM businesses WHERE id = ? AND brand_id = ? LIMIT 1');
+    $brandId = AGENCY_BRAND_ID;
+    $businessStmt->bind_param('ii', $leadId, $brandId);
     $businessStmt->execute();
     $business = $businessStmt->get_result()->fetch_assoc();
 
@@ -200,8 +237,12 @@ function notify_agency_lead_stage(array $business, string $stage): void
     $payload = [
         'business_name' => (string) ($business['business_name'] ?? ''),
         'email' => (string) ($business['email'] ?? ''),
+        'domain' => (string) ($business['website'] ?? ''),
+        'domain_url' => (string) ($business['website'] ?? ''),
+        'website' => (string) ($business['website'] ?? ''),
+        'url' => (string) ($business['website'] ?? ''),
         'stage' => $stage,
-        'agency_link' => 'https://smallbusinessdigitalservices.com.au/agency?lead=' . $businessId,
+        'agency_link' => AGENCY_BASE_URL . '/agency?lead=' . $businessId,
     ];
 
     $json = json_encode($payload);

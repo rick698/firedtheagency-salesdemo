@@ -19,7 +19,7 @@
 <body class="agency-page">
     <header class="agency-header">
         <div>
-            <span>Small Business Digital Services</span>
+            <span>Fired The Agency</span>
             <h1>Leads</h1>
         </div>
         <a href="/index.php?page=agency-logout">Logout</a>
@@ -30,6 +30,7 @@
             <thead>
                 <tr>
                     <th>Business name</th>
+                    <th>Domain / URL</th>
                     <th>Project</th>
                     <th>Stage</th>
                     <th>Email</th>
@@ -40,6 +41,7 @@
                 <?php foreach ($leads as $lead): ?>
                     <tr onclick="window.location.href='/agency?lead=<?= e((string) $lead['id']) ?>'">
                         <td><strong><?= e($lead['business_name'] ?? 'Untitled business') ?></strong></td>
+                        <td><?= e($lead['website'] ?? '') ?></td>
                         <td><?= e($lead['campaign_name'] ?? 'No project yet') ?></td>
                         <td><span class="stage-pill"><?= e($lead['stage']) ?></span></td>
                         <td><?= e($lead['email'] ?: ($lead['user_email'] ?? '')) ?></td>

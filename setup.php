@@ -7,6 +7,22 @@ require_once __DIR__ . '/app/core/bootstrap.php';
 $brand = current_brand($brands, 'firedtheagency');
 $page = $_GET['page'] ?? 'login';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$requestPath = rtrim(parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?: '', '/') ?: '/';
+
+if ($requestPath === '/agency' || $page === 'agency') {
+    if ($method === 'POST') {
+        handle_agency_login();
+        exit;
+    }
+
+    show_agency();
+    exit;
+}
+
+if ($page === 'agency-logout') {
+    handle_agency_logout();
+    exit;
+}
 
 if (isset($_GET['start']) && $method === 'GET') {
     start_demo_dashboard($brand);

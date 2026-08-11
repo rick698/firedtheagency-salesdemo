@@ -775,6 +775,7 @@ function save_project_step(array $brand): void
                     'id' => $businessId,
                     'business_name' => $businessName,
                     'email' => $accountEmail,
+                    'website' => $businessWebsite,
                 ], 'Step 1');
                 $_SESSION[$webhookKey] = true;
             }
