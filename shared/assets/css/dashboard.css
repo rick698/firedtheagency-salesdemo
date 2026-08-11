@@ -914,6 +914,10 @@ a {
     margin: 0 0 24px;
 }
 
+.demo-ad-card p span {
+    display: block;
+}
+
 .demo-ad-actions {
     display: flex;
     flex-wrap: wrap;
