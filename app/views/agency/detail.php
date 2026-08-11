@@ -19,7 +19,7 @@
 <body class="agency-page">
     <header class="agency-header">
         <div>
-            <a href="/agency" class="back-link">Back to leads</a>
+            <a href="/index.php?page=agency" class="back-link">Back to leads</a>
             <h1><?= e($business['business_name'] ?? 'Untitled business') ?></h1>
         </div>
         <span class="stage-pill large"><?= e($stage) ?></span>

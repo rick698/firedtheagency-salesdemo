@@ -23,7 +23,7 @@
         <?php if (!empty($error)): ?>
             <div class="agency-alert"><?= e($error) ?></div>
         <?php endif; ?>
-        <form method="post" action="/agency" class="agency-form">
+        <form method="post" action="/index.php?page=agency" class="agency-form">
             <label>
                 <span>User or email</span>
                 <input type="text" name="login" autocomplete="username" required>

@@ -76,13 +76,13 @@ function handle_agency_login(): void
         'email' => $email,
     ];
 
-    redirect('/agency');
+    redirect('/index.php?page=agency');
 }
 
 function handle_agency_logout(): void
 {
     unset($_SESSION['agency_user']);
-    redirect('/agency');
+    redirect('/index.php?page=agency');
 }
 
 function show_agency(): void
@@ -229,6 +229,7 @@ function agency_perth_time(?string $value): string
 function notify_agency_lead_stage(array $business, string $stage): void
 {
     $businessId = (int) ($business['id'] ?? 0);
+    $website = (string) ($business['website'] ?? '');
 
     if ($businessId <= 0) {
         return;
@@ -237,12 +238,16 @@ function notify_agency_lead_stage(array $business, string $stage): void
     $payload = [
         'business_name' => (string) ($business['business_name'] ?? ''),
         'email' => (string) ($business['email'] ?? ''),
-        'domain' => (string) ($business['website'] ?? ''),
-        'domain_url' => (string) ($business['website'] ?? ''),
-        'website' => (string) ($business['website'] ?? ''),
-        'url' => (string) ($business['website'] ?? ''),
+        'domain' => $website,
+        'domain_url' => $website,
+        'website' => $website,
+        'website_url' => $website,
+        'business_website' => $website,
+        'url' => $website,
+        'Website' => $website,
         'stage' => $stage,
-        'agency_link' => AGENCY_BASE_URL . '/agency?lead=' . $businessId,
+        'website_line' => 'Website: ' . ($website !== '' ? $website : 'Not supplied'),
+        'agency_link' => AGENCY_BASE_URL . '/index.php?page=agency&lead=' . $businessId,
     ];
 
     $json = json_encode($payload);

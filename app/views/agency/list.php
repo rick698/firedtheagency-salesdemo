@@ -39,7 +39,7 @@
             </thead>
             <tbody>
                 <?php foreach ($leads as $lead): ?>
-                    <tr onclick="window.location.href='/agency?lead=<?= e((string) $lead['id']) ?>'">
+                    <tr onclick="window.location.href='/index.php?page=agency&lead=<?= e((string) $lead['id']) ?>'">
                         <td><strong><?= e($lead['business_name'] ?? 'Untitled business') ?></strong></td>
                         <td><?= e($lead['website'] ?? '') ?></td>
                         <td><?= e($lead['campaign_name'] ?? 'No project yet') ?></td>
