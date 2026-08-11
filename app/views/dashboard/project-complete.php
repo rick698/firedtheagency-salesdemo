@@ -11,37 +11,16 @@ $lng = (float) ($target['target_lng'] ?? 115.8613);
 $radiusKm = max(1, min(17, (int) ($target['target_radius_km'] ?? 17)));
 $websiteHost = parse_url((string) ($business['website'] ?? ''), PHP_URL_HOST) ?: (string) ($business['website'] ?? 'yourwebsite.com.au');
 $websiteHost = preg_replace('#^www\.#i', '', trim($websiteHost)) ?: 'yourwebsite.com.au';
-$cleanCity = trim(preg_replace('/,.*/', '', $city));
-$cleanCity = $cleanCity !== 'your area' ? $cleanCity : '';
-$serviceTitle = ucwords($service !== '' && $service !== 'service' ? $service : 'Local Service');
-$cityTitle = $cleanCity !== '' ? ucwords($cleanCity) : 'Near You';
-$whyChooseText = (string) (($campaign['goals_data'] ?? [])['why_choose'] ?? '');
-$uspLines = array_values(array_filter(array_map(static function (string $line): string {
-    $line = preg_replace('/^[\s\-\*\x{2022}\d\.\)]+/u', '', trim($line)) ?? '';
-    return trim($line);
-}, preg_split('/\r\n|\r|\n/', $whyChooseText) ?: [])));
+$goalsData = $campaign['goals_data'] ?? [];
+$adPreview = is_array($goalsData['ad_preview'] ?? null) ? $goalsData['ad_preview'] : [];
 
-if (empty($uspLines)) {
-    $uspLines = ['Reliable local specialists', 'Fast friendly service', 'Get expert help today'];
+if (empty($adPreview['headline']) || empty($adPreview['description_line_1']) || empty($adPreview['description_line_2'])) {
+    $adPreview = fallback_demo_ad_preview($service, $city, (string) ($goalsData['why_choose'] ?? ''));
 }
 
-$limitText = static function (string $text, int $limit): string {
-    $text = trim(preg_replace('/\s+/', ' ', $text) ?? '');
-
-    if (mb_strlen($text) <= $limit) {
-        return $text;
-    }
-
-    return rtrim(mb_substr($text, 0, max(1, $limit - 1)), " \t\n\r\0\x0B.,;:-") . '.';
-};
-
-$headlineUsp = $limitText($uspLines[0] ?? 'Trusted local team', 30);
-$cta = $limitText('Get a quote today', 30);
-$adHeadline = $limitText($serviceTitle . ' ' . $cityTitle, 30) . ' | ' . $headlineUsp . ' | ' . $cta;
-$lineOneUsp = $limitText($uspLines[0] ?? 'reliable local support', 34);
-$lineTwoUsp = isset($uspLines[1]) ? $limitText($uspLines[1], 34) : '';
-$adDescriptionLineOne = $limitText($serviceTitle . ' with ' . lcfirst($lineOneUsp) . ($lineTwoUsp !== '' ? ' and ' . lcfirst($lineTwoUsp) : '') . '.', 90);
-$adDescriptionLineTwo = $limitText(($uspLines[2] ?? $uspLines[1] ?? 'Ready when you are') . '. ' . $cta . '.', 90);
+$adHeadline = (string) ($adPreview['headline'] ?? '');
+$adDescriptionLineOne = (string) ($adPreview['description_line_1'] ?? '');
+$adDescriptionLineTwo = (string) ($adPreview['description_line_2'] ?? '');
 unset($_SESSION['checkout_error']);
 ob_start();
 ?>

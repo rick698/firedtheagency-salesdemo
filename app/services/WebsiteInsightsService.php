@@ -376,3 +376,125 @@ function fallback_search_keywords(string $service, string $serviceDescription, s
 
     return array_slice(array_values(array_unique($keywords)), 0, 5);
 }
+
+function generate_demo_ad_preview(array $campaign, array $business): array
+{
+    $target = $campaign['target_audience_data'] ?? json_decode((string) ($campaign['target_audience'] ?? ''), true) ?: [];
+    $goals = $campaign['goals_data'] ?? json_decode((string) ($campaign['goals'] ?? ''), true) ?: [];
+    $service = trim((string) ($target['service_short'] ?? $campaign['campaign_name'] ?? 'service'));
+    $serviceDescription = trim((string) ($target['service_description'] ?? ''));
+    $whyChoose = trim((string) ($goals['why_choose'] ?? ''));
+    $city = setup_preview_city($target);
+    $fallback = fallback_demo_ad_preview($service, $city, $whyChoose);
+    $config = require APP_ROOT . '/app/config/app.php';
+    $apiKey = openai_api_key($config);
+
+    if ($apiKey === '') {
+        return $fallback;
+    }
+
+    $payload = [
+        'model' => $config['ai']['model'] ?? 'gpt-4o-mini',
+        'response_format' => ['type' => 'json_object'],
+        'messages' => [
+            [
+                'role' => 'system',
+                'content' => 'Return only valid JSON with keys: headline, description_line_1, description_line_2. The headline must exactly follow this pattern: "<Main service> <City> | <USP> | <Call to action>". Keep the USP and call to action in the headline each max 30 characters. description_line_1 must mention the main service and include one or two USPs, max 90 characters. description_line_2 must include one more USP plus a call to action, max 90 characters. Do not use exclamation marks. Keep it realistic for a Google Search ad.',
+            ],
+            [
+                'role' => 'user',
+                'content' => "Business: " . ($business['business_name'] ?? '') . "\nWebsite: " . ($business['website'] ?? '') . "\nMain service: {$service}\nCity/service area: {$city}\nService/menu details: {$serviceDescription}\nUSPs/why choose: {$whyChoose}",
+            ],
+        ],
+        'temperature' => 0.45,
+    ];
+
+    $ch = curl_init('https://api.openai.com/v1/chat/completions');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $apiKey,
+            'Content-Type: application/json',
+        ],
+        CURLOPT_CONNECTTIMEOUT => 8,
+        CURLOPT_TIMEOUT => 20,
+    ]);
+
+    $body = curl_exec($ch);
+    $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+
+    if (!is_string($body) || $body === '' || $status >= 400) {
+        return $fallback;
+    }
+
+    $decoded = json_decode($body, true);
+    $content = $decoded['choices'][0]['message']['content'] ?? '';
+    $ad = is_string($content) ? json_decode($content, true) : null;
+
+    if (!is_array($ad)) {
+        return $fallback;
+    }
+
+    return normalize_demo_ad_preview([
+        'headline' => sanitize_ai_field($ad['headline'] ?? $fallback['headline'], 110),
+        'description_line_1' => sanitize_ai_field($ad['description_line_1'] ?? $fallback['description_line_1'], 90),
+        'description_line_2' => sanitize_ai_field($ad['description_line_2'] ?? $fallback['description_line_2'], 90),
+    ], $fallback);
+}
+
+function fallback_demo_ad_preview(string $service, string $city, string $whyChoose): array
+{
+    $serviceTitle = ucwords(trim($service) !== '' && trim($service) !== 'service' ? trim($service) : 'Local Service');
+    $cityTitle = $city !== '' && $city !== 'your area' ? ucwords(trim(preg_replace('/,.*/', '', $city))) : 'Near You';
+    $uspLines = array_values(array_filter(array_map(static function (string $line): string {
+        $line = preg_replace('/^[\s\-\*\x{2022}\d\.\)]+/u', '', trim($line)) ?? '';
+        return trim($line);
+    }, preg_split('/\r\n|\r|\n/', $whyChoose) ?: [])));
+
+    if (empty($uspLines)) {
+        $uspLines = ['Reliable local specialists', 'Fast friendly service', 'Get expert help today'];
+    }
+
+    $headlineUsp = demo_ad_limit_text($uspLines[0] ?? 'Trusted local team', 30);
+    $cta = demo_ad_limit_text('Get a quote today', 30);
+    $lineOneUsp = demo_ad_limit_text($uspLines[0] ?? 'reliable local support', 34);
+    $lineTwoUsp = isset($uspLines[1]) ? demo_ad_limit_text($uspLines[1], 34) : '';
+
+    return [
+        'headline' => demo_ad_limit_text($serviceTitle . ' ' . $cityTitle, 30) . ' | ' . $headlineUsp . ' | ' . $cta,
+        'description_line_1' => demo_ad_limit_text($serviceTitle . ' with ' . lcfirst($lineOneUsp) . ($lineTwoUsp !== '' ? ' and ' . lcfirst($lineTwoUsp) : '') . '.', 90),
+        'description_line_2' => demo_ad_limit_text(($uspLines[2] ?? $uspLines[1] ?? 'Ready when you are') . '. ' . $cta . '.', 90),
+    ];
+}
+
+function normalize_demo_ad_preview(array $ad, array $fallback): array
+{
+    $headline = trim((string) ($ad['headline'] ?? ''));
+    $parts = array_map('trim', explode('|', $headline));
+
+    if (count($parts) >= 3) {
+        $headline = demo_ad_limit_text($parts[0], 30) . ' | ' . demo_ad_limit_text($parts[1], 30) . ' | ' . demo_ad_limit_text($parts[2], 30);
+    } else {
+        $headline = $fallback['headline'];
+    }
+
+    return [
+        'headline' => $headline !== '' ? $headline : $fallback['headline'],
+        'description_line_1' => demo_ad_limit_text((string) ($ad['description_line_1'] ?? $fallback['description_line_1']), 90),
+        'description_line_2' => demo_ad_limit_text((string) ($ad['description_line_2'] ?? $fallback['description_line_2']), 90),
+    ];
+}
+
+function demo_ad_limit_text(string $text, int $limit): string
+{
+    $text = trim(preg_replace('/\s+/', ' ', $text) ?? '');
+
+    if (mb_strlen($text) <= $limit) {
+        return $text;
+    }
+
+    return rtrim(mb_substr($text, 0, max(1, $limit - 1)), " \t\n\r\0\x0B.,;:-") . '.';
+}

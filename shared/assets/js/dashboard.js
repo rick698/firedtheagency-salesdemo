@@ -393,7 +393,7 @@ function saveWizardStep(step, onSuccess) {
         return;
     }
 
-    button.text('Saving...').prop('disabled', true);
+    button.text(step === 2 ? 'Generating ad...' : 'Saving...').prop('disabled', true);
 
     $.ajax({
         url: saveUrl,

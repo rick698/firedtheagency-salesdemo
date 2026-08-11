@@ -135,7 +135,7 @@ function save_project(array $brand): void
         $budgetCents = $budget * 100;
         $campaignType = 'google_ads';
         $status = 'submitted';
-        $targetAudience = json_encode([
+        $targetAudienceData = [
             'service_area' => $serviceArea,
             'service_short' => $serviceShort,
             'service_description' => $serviceDescription,
@@ -144,11 +144,21 @@ function save_project(array $brand): void
             'target_lat' => $targetLat,
             'target_lng' => $targetLng,
             'target_radius_km' => max(1, min(17, $targetRadiusKm)),
-        ]);
-        $goals = json_encode([
+        ];
+        $goalsData = [
             'story' => $story,
             'why_choose' => $whyChoose,
+        ];
+        $goalsData['ad_preview'] = generate_demo_ad_preview([
+            'campaign_name' => $campaignName,
+            'target_audience_data' => $targetAudienceData,
+            'goals_data' => $goalsData,
+        ], [
+            'business_name' => $businessName,
+            'website' => $businessWebsite,
         ]);
+        $targetAudience = json_encode($targetAudienceData);
+        $goals = json_encode($goalsData);
 
         $businessStmt = $connection->prepare('UPDATE businesses SET business_name = ?, website = ?, email = ?, updated_at = NOW() WHERE id = ? AND brand_id = ?');
         $businessStmt->bind_param('sssii', $businessName, $businessWebsite, $accountEmail, $businessId, $brandId);
@@ -208,7 +218,7 @@ function show_project_complete(array $brand): void
     $businessId = (int) $user['business_id'];
     $campaignId = (int) ($_SESSION['completed_campaign_id'] ?? 0);
 
-    $businessStmt = $connection->prepare('SELECT id, business_name FROM businesses WHERE id = ? AND brand_id = ? LIMIT 1');
+    $businessStmt = $connection->prepare('SELECT id, business_name, website FROM businesses WHERE id = ? AND brand_id = ? LIMIT 1');
     $businessStmt->bind_param('ii', $businessId, $brandId);
     $businessStmt->execute();
     $business = $businessStmt->get_result()->fetch_assoc() ?: ['business_name' => 'Your Business'];
@@ -684,7 +694,7 @@ function save_project_step(array $brand): void
         exit;
     }
 
-    $targetAudience = json_encode([
+    $targetAudienceData = [
         'service_area' => $serviceArea,
         'service_short' => post_value('service_short'),
         'service_description' => post_value('service_description'),
@@ -693,11 +703,25 @@ function save_project_step(array $brand): void
         'target_lat' => post_value('target_lat'),
         'target_lng' => post_value('target_lng'),
         'target_radius_km' => max(1, min(17, $targetRadiusKm)),
-    ]);
-    $goals = json_encode([
+    ];
+    $goalsData = [
         'story' => post_value('story'),
         'why_choose' => post_value('why_choose'),
-    ]);
+    ];
+
+    if ($step >= 2) {
+        $goalsData['ad_preview'] = generate_demo_ad_preview([
+            'campaign_name' => $campaignName,
+            'target_audience_data' => $targetAudienceData,
+            'goals_data' => $goalsData,
+        ], [
+            'business_name' => $businessName,
+            'website' => $businessWebsite,
+        ]);
+    }
+
+    $targetAudience = json_encode($targetAudienceData);
+    $goals = json_encode($goalsData);
 
     $connection->begin_transaction();
 
