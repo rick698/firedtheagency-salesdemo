@@ -236,6 +236,11 @@ function notify_agency_lead_stage(array $business, string $stage): void
     }
 
     $payload = [
+        'subject' => 'new signup FiredTheAgency (stage ' . strtolower($stage) . ')',
+        'email_subject' => 'new signup FiredTheAgency (stage ' . strtolower($stage) . ')',
+        'brand' => 'FiredTheAgency',
+        'brand_name' => 'FiredTheAgency',
+        'agency' => 'FiredTheAgency',
         'business_name' => (string) ($business['business_name'] ?? ''),
         'email' => (string) ($business['email'] ?? ''),
         'domain' => $website,
@@ -247,6 +252,7 @@ function notify_agency_lead_stage(array $business, string $stage): void
         'Website' => $website,
         'stage' => $stage,
         'website_line' => 'Website: ' . ($website !== '' ? $website : 'Not supplied'),
+        'domain_line' => 'Domain: ' . ($website !== '' ? $website : 'Not supplied'),
         'agency_link' => AGENCY_BASE_URL . '/index.php?page=agency&lead=' . $businessId,
     ];
 
