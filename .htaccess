@@ -1,0 +1,3 @@
+RewriteEngine On
+
+RewriteRule ^agency/?$ index.php?page=agency [QSA,L]
