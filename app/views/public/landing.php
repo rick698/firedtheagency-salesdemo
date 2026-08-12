@@ -13,6 +13,11 @@
     </form>
     <a class="subtle-link" href="<?= e(brand_url($brand, 'login')) ?>">Already subscribed? Login</a>
 </section>
+<script>
+  if (typeof window.trackFunnelEvent === 'function') {
+    window.trackFunnelEvent('landing_page_visit');
+  }
+</script>
 <?php
 $content = ob_get_clean();
 require APP_ROOT . '/app/views/layouts/public.php';

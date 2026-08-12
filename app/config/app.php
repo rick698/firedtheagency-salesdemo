@@ -15,6 +15,13 @@ $config = [
         'openai_api_key' => '',
         'model' => 'gpt-4o-mini',
     ],
+    'tracking' => [
+        'ga4_measurement_id' => '',
+        'meta_pixel_id' => '',
+        'meta_capi_token' => '',
+        'meta_test_event_code' => '',
+        'meta_graph_version' => 'v25.0',
+    ],
 ];
 
 $localConfigPath = __DIR__ . '/local.php';
@@ -32,6 +39,10 @@ if (is_file($localConfigPath)) {
 
     if (isset($localConfig['ai']) && is_array($localConfig['ai'])) {
         $config['ai'] = array_merge($config['ai'], $localConfig['ai']);
+    }
+
+    if (isset($localConfig['tracking']) && is_array($localConfig['tracking'])) {
+        $config['tracking'] = array_merge($config['tracking'], $localConfig['tracking']);
     }
 }
 

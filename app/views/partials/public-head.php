@@ -1,14 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RPEPJVSYY2"></script>
+    <?php
+        $trackingConfig = tracking_config();
+        $ga4MeasurementId = trim((string) ($trackingConfig['ga4_measurement_id'] ?? ''));
+        $metaPixelId = trim((string) ($trackingConfig['meta_pixel_id'] ?? ''));
+        $trackingEndpoint = brand_url($brand, 'track-event');
+    ?>
+    <?php if ($ga4MeasurementId !== ''): ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= e($ga4MeasurementId) ?>"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+      gtag('config', '<?= e($ga4MeasurementId) ?>');
+    </script>
+    <?php endif; ?>
+    <?php if ($metaPixelId !== ''): ?>
+    <script>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '<?= e($metaPixelId) ?>');
+      fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<?= e($metaPixelId) ?>&ev=PageView&noscript=1"></noscript>
+    <?php endif; ?>
+    <script>
+      window.ftaTracking = {
+        endpoint: <?= json_encode($trackingEndpoint) ?>,
+        brand: <?= json_encode($brand['slug'] ?? 'firedtheagency') ?>,
+        query: <?= json_encode(tracking_query_params()) ?>
+      };
+      (function () {
+        function eventId() {
+          if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+          }
 
-      gtag('config', 'G-RPEPJVSYY2');
+          return 'evt_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2);
+        }
+
+        window.trackFunnelEvent = function (name, params) {
+          var tracking = window.ftaTracking || {};
+          var eventParams = Object.assign({}, tracking.query || {}, params || {});
+          var id = eventParams.event_id || eventId();
+          eventParams.event_id = id;
+          eventParams.brand = tracking.brand || 'firedtheagency';
+          eventParams.page_url = window.location.href;
+          eventParams.referrer = document.referrer || '';
+
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', name, eventParams);
+          }
+
+          if (typeof window.fbq === 'function') {
+            window.fbq('trackCustom', name, eventParams, { eventID: id });
+          }
+
+          if (tracking.endpoint && window.fetch) {
+            window.fetch(tracking.endpoint, {
+              method: 'POST',
+              credentials: 'same-origin',
+              keepalive: true,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(Object.assign({ event_name: name }, eventParams))
+            }).catch(function () {});
+          }
+
+          return id;
+        };
+      })();
     </script>
     <script>!function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");oaiq("init",{pixelId:"3CpQMg6u3hMqYJhHvAtWQd",debug:true});</script>
     <meta charset="UTF-8">

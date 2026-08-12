@@ -24,6 +24,7 @@ let previewMap;
 let currentMarker;
 let currentCircle;
 let currentRadius = 17;
+let lastTrackedWizardStep = null;
 const knownCities = {
     'perth': [-31.9523, 115.8613],
     'perth wa': [-31.9523, 115.8613],
@@ -52,6 +53,7 @@ $(function () {
     }
 
     initCheckoutTerms();
+    initVideoTracking();
 });
 
 function toggleSidebar() {
@@ -97,6 +99,7 @@ function initProjectWizard() {
             initServiceRadiusMap();
         }
 
+        trackWizardStep(currentStep);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -126,6 +129,37 @@ function initProjectWizard() {
 
     initWebsiteInsights();
     renderStep();
+}
+
+function trackWizardStep(step) {
+    if (lastTrackedWizardStep === step) {
+        return;
+    }
+
+    lastTrackedWizardStep = step;
+    trackFunnelSafely('demo_step_' + step + '_open', { step });
+}
+
+function trackFunnelSafely(eventName, params) {
+    if (typeof window.trackFunnelEvent === 'function') {
+        window.trackFunnelEvent(eventName, params || {});
+    }
+}
+
+function initVideoTracking() {
+    let tracked = false;
+
+    $('video').one('play', function () {
+        tracked = true;
+        trackFunnelSafely('watch_video', { source: 'html5_video' });
+    });
+
+    $('iframe[src*="youtube"], iframe[src*="youtu.be"], iframe[src*="vimeo"]').one('mouseenter focus', function () {
+        if (!tracked) {
+            tracked = true;
+            trackFunnelSafely('watch_video', { source: 'embedded_video' });
+        }
+    });
 }
 
 function initWebsiteInsights() {
@@ -619,6 +653,9 @@ function initCheckoutTerms() {
         }
 
         form.removeClass('terms-error');
+        trackFunnelSafely('stripe_checkout_click', {
+            plan: form.find('input[name="plan"]').val() || ''
+        });
         form.find('.pricing-button').text('Opening Stripe...');
     });
 

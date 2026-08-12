@@ -57,6 +57,11 @@ if ($page === 'website-insights' && $method === 'POST') {
     exit;
 }
 
+if ($page === 'track-event' && $method === 'POST') {
+    handle_tracking_event($brand);
+    exit;
+}
+
 if ($page === 'stripe-checkout' && $method === 'POST') {
     start_stripe_checkout($brand);
     exit;
@@ -88,6 +93,7 @@ if ($page === 'logout') {
 
 match ($page) {
     'register' => show_register($brand),
+    'landing' => show_landing($brand),
     'login' => show_login($brand),
     'dashboard' => show_dashboard($brand),
     'create-project' => show_create_project($brand),

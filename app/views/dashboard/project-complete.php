@@ -193,6 +193,11 @@ ob_start();
         </div>
     </section>
 </main>
+<script>
+  if (typeof window.trackFunnelEvent === 'function') {
+    window.trackFunnelEvent('demo_overview_open');
+  }
+</script>
 <?php
 $content = ob_get_clean();
 require APP_ROOT . '/app/views/layouts/client.php';

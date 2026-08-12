@@ -184,17 +184,6 @@ ob_start();
 
     </form>
 </main>
-<script>
-  oaiq("track", "checkout_started", {
-    source: "create_project_page",
-    brand: "small_business_digital_services"
-  });
-</script>
-<script>
-  gtag("event", "begin_checkout", {
-    currency: "AUD"
-  });
-</script>
 <?php
 $content = ob_get_clean();
 require APP_ROOT . '/app/views/layouts/client.php';

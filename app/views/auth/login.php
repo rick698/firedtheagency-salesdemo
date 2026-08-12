@@ -26,6 +26,11 @@
         <button class="primary-button" type="submit">Login</button>
     </form>
 </section>
+<script>
+  if (typeof window.trackFunnelEvent === 'function') {
+    window.trackFunnelEvent('landing_page_visit', { source: 'login_page' });
+  }
+</script>
 <?php
 $content = ob_get_clean();
 require APP_ROOT . '/app/views/layouts/public.php';
