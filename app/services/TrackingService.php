@@ -13,7 +13,10 @@ function tracking_allowed_events(): array
 {
     return [
         'landing_page_visit',
+        'PageView',
         'ViewContent',
+        'Lead',
+        'InitiateCheckout',
         'watch_video',
         'demo_step_1_open',
         'demo_step_2_open',

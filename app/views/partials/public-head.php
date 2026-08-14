@@ -62,7 +62,13 @@
           }
 
           if (typeof window.fbq === 'function') {
-            window.fbq('trackCustom', metaName, metaParams, { eventID: id });
+            var metaStandardEvents = {
+              PageView: true,
+              ViewContent: true,
+              Lead: true,
+              InitiateCheckout: true
+            };
+            window.fbq(metaStandardEvents[metaName] ? 'track' : 'trackCustom', metaName, metaParams, { eventID: id });
           }
 
           if (tracking.endpoint && window.fetch) {

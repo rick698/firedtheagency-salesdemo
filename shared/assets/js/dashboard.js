@@ -139,7 +139,10 @@ function trackWizardStep(step) {
     lastTrackedWizardStep = step;
     trackFunnelSafely('demo_step_' + step + '_open', {
         step,
-        meta_event_name: 'demo_page_' + step
+        meta_event_name: 'PageView',
+        content_name: 'demo_page_' + step,
+        page_path: '/demo/step-' + step,
+        page_title: 'Demo Step ' + step
     });
     trackGa4PageViewSafely('/demo/step-' + step, 'Demo Step ' + step, { step });
 }
@@ -672,7 +675,9 @@ function initCheckoutTerms() {
 
         form.removeClass('terms-error');
         trackFunnelSafely('stripe_checkout_click', {
-            plan: form.find('input[name="plan"]').val() || ''
+            plan: form.find('input[name="plan"]').val() || '',
+            meta_event_name: 'InitiateCheckout',
+            content_name: 'stripe_checkout'
         });
         form.find('.pricing-button').text('Opening Stripe...');
     });
