@@ -161,13 +161,21 @@ function initVideoTracking() {
 
     $('video').one('play', function () {
         tracked = true;
-        trackFunnelSafely('watch_video', { source: 'html5_video' });
+        trackFunnelSafely('watch_video', {
+            source: 'html5_video',
+            meta_event_name: 'ViewContent',
+            content_name: 'video'
+        });
     });
 
     $('iframe[src*="youtube"], iframe[src*="youtu.be"], iframe[src*="vimeo"]').one('mouseenter focus', function () {
         if (!tracked) {
             tracked = true;
-            trackFunnelSafely('watch_video', { source: 'embedded_video' });
+            trackFunnelSafely('watch_video', {
+                source: 'embedded_video',
+                meta_event_name: 'ViewContent',
+                content_name: 'video'
+            });
         }
     });
 }
