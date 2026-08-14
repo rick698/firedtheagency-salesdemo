@@ -57,7 +57,7 @@ if ($page === 'website-insights' && $method === 'POST') {
     exit;
 }
 
-if ($page === 'track-event' && $method === 'POST') {
+if ($page === 'track-event' && in_array($method, ['POST', 'OPTIONS'], true)) {
     handle_tracking_event($brand);
     exit;
 }

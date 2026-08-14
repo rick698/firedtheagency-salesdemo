@@ -28,7 +28,13 @@ function tracking_allowed_events(): array
 
 function handle_tracking_event(array $brand): void
 {
+    tracking_cors_headers();
     header('Content-Type: application/json');
+
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') {
+        http_response_code(204);
+        exit;
+    }
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
         http_response_code(405);
@@ -66,6 +72,31 @@ function handle_tracking_event(array $brand): void
         'meta_capi' => $metaResult,
     ]);
     exit;
+}
+
+function tracking_cors_headers(): void
+{
+    $origin = trim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''));
+
+    if ($origin === '') {
+        return;
+    }
+
+    $host = parse_url($origin, PHP_URL_HOST);
+    $allowed = is_string($host) && (
+        $host === 'firedtheagency.com'
+        || $host === 'www.firedtheagency.com'
+        || str_ends_with($host, '.firedtheagency.com')
+    );
+
+    if (!$allowed) {
+        return;
+    }
+
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+    header('Vary: Origin');
 }
 
 function tracking_send_meta_capi(array $config, array $brand, string $eventName, string $eventId, array $payload): string
