@@ -72,6 +72,20 @@
 
           return id;
         };
+
+        window.trackGa4PageView = function (path, title, params) {
+          if (typeof window.gtag !== 'function') {
+            return;
+          }
+
+          var tracking = window.ftaTracking || {};
+          var pageParams = Object.assign({}, tracking.query || {}, params || {});
+          pageParams.brand = tracking.brand || 'firedtheagency';
+          pageParams.page_path = path;
+          pageParams.page_title = title;
+          pageParams.page_location = window.location.origin + path;
+          window.gtag('event', 'page_view', pageParams);
+        };
       })();
     </script>
     <script>!function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");oaiq("init",{pixelId:"3CpQMg6u3hMqYJhHvAtWQd",debug:true});</script>

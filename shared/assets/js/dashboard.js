@@ -138,11 +138,18 @@ function trackWizardStep(step) {
 
     lastTrackedWizardStep = step;
     trackFunnelSafely('demo_step_' + step + '_open', { step });
+    trackGa4PageViewSafely('/demo/step-' + step, 'Demo Step ' + step, { step });
 }
 
 function trackFunnelSafely(eventName, params) {
     if (typeof window.trackFunnelEvent === 'function') {
         window.trackFunnelEvent(eventName, params || {});
+    }
+}
+
+function trackGa4PageViewSafely(path, title, params) {
+    if (typeof window.trackGa4PageView === 'function') {
+        window.trackGa4PageView(path, title, params || {});
     }
 }
 

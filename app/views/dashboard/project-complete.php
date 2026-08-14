@@ -197,6 +197,9 @@ ob_start();
   if (typeof window.trackFunnelEvent === 'function') {
     window.trackFunnelEvent('demo_overview_open');
   }
+  if (typeof window.trackGa4PageView === 'function') {
+    window.trackGa4PageView('/demo/overview', 'Demo Overview');
+  }
 </script>
 <?php
 $content = ob_get_clean();
