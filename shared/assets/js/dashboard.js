@@ -139,7 +139,7 @@ function trackWizardStep(step) {
     lastTrackedWizardStep = step;
     trackFunnelSafely('demo_step_' + step + '_open', {
         step,
-        meta_event_name: 'PageView',
+        meta_event_name: 'ViewContent',
         content_name: 'demo_page_' + step,
         page_path: '/demo/step-' + step,
         page_title: 'Demo Step ' + step
