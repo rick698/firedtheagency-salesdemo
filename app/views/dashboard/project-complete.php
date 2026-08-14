@@ -195,7 +195,7 @@ ob_start();
 </main>
 <script>
   if (typeof window.trackFunnelEvent === 'function') {
-    window.trackFunnelEvent('demo_overview_open');
+    window.trackFunnelEvent('demo_overview_open', { meta_event_name: 'demo_overview' });
   }
   if (typeof window.trackGa4PageView === 'function') {
     window.trackGa4PageView('/demo/overview', 'Demo Overview');

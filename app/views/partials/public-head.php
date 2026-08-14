@@ -51,13 +51,18 @@
           eventParams.brand = tracking.brand || 'firedtheagency';
           eventParams.page_url = window.location.href;
           eventParams.referrer = document.referrer || '';
+          var metaName = eventParams.meta_event_name || name;
+          var gaParams = Object.assign({}, eventParams);
+          var metaParams = Object.assign({}, eventParams);
+          delete gaParams.meta_event_name;
+          delete metaParams.meta_event_name;
 
           if (typeof window.gtag === 'function') {
-            window.gtag('event', name, eventParams);
+            window.gtag('event', name, gaParams);
           }
 
           if (typeof window.fbq === 'function') {
-            window.fbq('trackCustom', name, eventParams, { eventID: id });
+            window.fbq('trackCustom', metaName, metaParams, { eventID: id });
           }
 
           if (tracking.endpoint && window.fetch) {
@@ -66,7 +71,7 @@
               credentials: 'same-origin',
               keepalive: true,
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(Object.assign({ event_name: name }, eventParams))
+              body: JSON.stringify(Object.assign({ event_name: metaName, ga_event_name: name }, metaParams))
             }).catch(function () {});
           }
 

@@ -137,7 +137,10 @@ function trackWizardStep(step) {
     }
 
     lastTrackedWizardStep = step;
-    trackFunnelSafely('demo_step_' + step + '_open', { step });
+    trackFunnelSafely('demo_step_' + step + '_open', {
+        step,
+        meta_event_name: 'demo_page_' + step
+    });
     trackGa4PageViewSafely('/demo/step-' + step, 'Demo Step ' + step, { step });
 }
 

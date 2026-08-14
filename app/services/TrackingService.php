@@ -18,6 +18,10 @@ function tracking_allowed_events(): array
         'demo_step_2_open',
         'demo_step_3_open',
         'demo_overview_open',
+        'demo_page_1',
+        'demo_page_2',
+        'demo_page_3',
+        'demo_overview',
         'stripe_checkout_click',
     ];
 }
